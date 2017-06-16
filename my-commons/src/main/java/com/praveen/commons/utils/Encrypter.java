@@ -1,4 +1,4 @@
-package com.commerzbank.clip.utils;
+package com.praveen.commons.utils;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;

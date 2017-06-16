@@ -1,4 +1,4 @@
-package com.local.learn.workbench;
+package com.praveen.commons;
 
 /**
  * Hello world!

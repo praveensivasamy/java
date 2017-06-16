@@ -87,7 +87,7 @@ public class ToStringUtils {
 	    return ((DateTime) o).toString("dd/MM/yyyy");
 	}
 	if (o instanceof Date) {
-	    return DateUtil.format((Date) o);
+	    return DateUtils.format((Date) o);
 	}
 	if (o instanceof Object[]) {
 	    return Arrays.deepToString((Object[]) o);
@@ -122,7 +122,7 @@ public class ToStringUtils {
 	    return ((DateTime) o).toString("dd/MM/yyyy");
 	}
 	if (o instanceof Date) {
-	    return DateUtil.format((Date) o);
+	    return DateUtils.format((Date) o);
 	}
 	if (o instanceof Long || o instanceof Integer || o instanceof Double) {
 	    return format.format(o);
@@ -197,7 +197,7 @@ public class ToStringUtils {
 	    return "null";
 	}
 	if (value instanceof Date) {
-	    return DateUtil.format((Date) value);
+	    return DateUtils.format((Date) value);
 	}
 	return value.toString();
     }
