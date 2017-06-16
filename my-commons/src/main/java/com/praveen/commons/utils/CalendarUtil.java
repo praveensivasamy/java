@@ -3,9 +3,6 @@ package com.praveen.commons.utils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
-import com.praveen.commons.enums.AppExceptionIdentifier;
-import com.praveen.commons.exception.ApplicationException;
-
 public class CalendarUtil {
 
     /**
