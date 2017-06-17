@@ -33,17 +33,16 @@ public class HibernateProvider {
     private static Map<String, HibernateProvider> instances = new HashMap<String, HibernateProvider>();
 
     private SessionFactory sessionFactory;
-    private Configuration configuration;
     private String configFile;
     private String defaultSchema;
     private String url;
     private String user;
     private String password;
+
     /** The {@link Interceptor} for this instance, if any */
     private Interceptor interceptor;
 
     private HibernateProvider(String configFile, Interceptor dbInterceptor) {
-	log.debug("configFile: " + configFile);
 	this.configFile = configFile;
 	this.interceptor = dbInterceptor;
 	initializeSessionFactory();
@@ -55,17 +54,14 @@ public class HibernateProvider {
 	    StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure(configFile).build();
 	    Metadata metaData = new MetadataSources(ssr).getMetadataBuilder().build();
 	    sessionFactory = metaData.getSessionFactoryBuilder().build();
-	    
-	  /*  log.info(configuration.getProperty(AvailableSettings.URL) + "@user:" + configuration.getProperty(AvailableSettings.USER) + "@schema:"
-		    + configuration.getProperty(AvailableSettings.DEFAULT_SCHEMA));
-*/
+
 	} catch (Exception e) {
 	    log.error("Error in Hibernate initialization: " + this.url + ";" + this.user, e);
 	    // hibernate background thread prevents clean application exit - cannot call sessionFactory.close()
 	    // as the sessionFactory will be null in case of exceptions
 	    System.exit(1);
 	}
-	log.debug("Hibernate initialized in " + (System.currentTimeMillis() - time) + " ms.");
+	log.info("Hibernate initialized in " + (System.currentTimeMillis() - time) + " ms.");
     }
 
     /**
@@ -74,12 +70,14 @@ public class HibernateProvider {
      * @return the {@link HibernateProvider} instance for the above parameters
      */
     public static HibernateProvider instance(String configFile, Interceptor dbInterceptor) {
+	log.info("configFile : {} , interceptor : {}", configFile, dbInterceptor);
 	synchronized (HibernateProvider.class) {
 	    HibernateProvider res = instances.get(getMapKey(configFile, dbInterceptor));
 	    if (res == null) {
 		res = new HibernateProvider(configFile, dbInterceptor);
 		instances.put(getMapKey(configFile, dbInterceptor), res);
 	    }
+
 	    return res;
 	}
     }
@@ -91,6 +89,7 @@ public class HibernateProvider {
      * Required if the db conn parameters are set as system props from command line
      */
     public static HibernateProvider instance(String configFile, String connString, Interceptor dbInterceptor) {
+	log.info("configFile: {} , connectionString : {} , interceptor : {}", configFile, connString, dbInterceptor);
 	synchronized (HibernateProvider.class) {
 	    HibernateProvider res = instances.get(getMapKey(configFile, connString, dbInterceptor));
 	    if (res == null) {
@@ -102,13 +101,13 @@ public class HibernateProvider {
     }
 
     private HibernateProvider(String configFile, String connString, Interceptor dbInterceptor) {
-	log.debug("configFile:{} , connectionString {} , interceptor {}", configFile, connString, dbInterceptor);
 	this.configFile = configFile;
 	this.interceptor = dbInterceptor;
 	url = ToStringUtils.getUrl(connString);
 	user = ToStringUtils.getUser(connString);
 	password = ToStringUtils.getPassword(connString);
 	defaultSchema = ToStringUtils.getSchema(connString);
+
 	initializeSessionFactory();
     }
 
@@ -158,4 +157,14 @@ public class HibernateProvider {
 	}
     }
 
+    /**
+     * Close all available {@link HibernateProvider} instances
+     */
+    public static final void tearDownAll() {
+	for (HibernateProvider instance : instances.values()) {
+	    log.info("Closing SessionFactory");
+	    instance.getSessionFactory().close();
+	}
+	instances.clear();
+    }
 }

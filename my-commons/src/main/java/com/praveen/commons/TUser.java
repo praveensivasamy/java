@@ -10,14 +10,14 @@ import javax.persistence.Table;
 import com.praveen.commons.utils.ToStringUtils;
 
 @Entity
-@Table(name = "T_USER")
-public class TUser implements Serializable{
+@Table(name = "T_USER_AUTH")
+public class TUser implements Serializable {
 
     /**
      * 
      */
     private static final long serialVersionUID = 1L;
-    @Id
+
     @Column(name = "UID")
     private int userId;
     @Column(name = "ACTIVE")

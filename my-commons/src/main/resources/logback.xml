@@ -21,7 +21,7 @@
 		<appender-ref ref="FTPLOG" />
 		<appender-ref ref="TECH" />
 	</logger>
-	<logger name="org.hibernate" level="INFO" additivity="false">
+	<logger name="org.hibernate" level="ERROR" additivity="false">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="FTPLOG" />
 		<appender-ref ref="TECH" />

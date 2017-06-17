@@ -36,7 +36,9 @@ public class JpaDao {
 
     protected JpaDao(HibernateProvider provider) {
 	session = provider.getSession();
-	log.info("New JPADao intance created. Session: " + session);
+	if (log.isDebugEnabled()) {
+	    log.debug("New JPADao intance created. Session :{} ", session);
+	}
     }
 
     public static JpaDao instance(HibernateProvider hibernateProvider) {
@@ -243,7 +245,7 @@ public class JpaDao {
     }
 
     /**
-     * Start a transaction 
+     * Start a transaction
      */
     public void beginTransaction() {
 	session.beginTransaction();
