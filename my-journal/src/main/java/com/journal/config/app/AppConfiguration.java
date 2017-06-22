@@ -17,7 +17,7 @@ public class AppConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(AppConfiguration.class);
 
-    @Bean
+    @Bean(name="baseConfiguration")
     public String BaseConfiguration() {
 	log.info("Loaded Base Configuration");
 	return "BaseConfiguration";
