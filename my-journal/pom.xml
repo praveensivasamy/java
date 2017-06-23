@@ -86,8 +86,8 @@
 				<configuration>
 					<url>http://localhost:8080/manager/text</url>
 					<server>tomcat8.5</server>
-					<username>admin</username>
-					<password>admin</password>
+					<username>script</username>
+					<password>script</password>
 				</configuration>
 			</plugin>
 		</plugins>
