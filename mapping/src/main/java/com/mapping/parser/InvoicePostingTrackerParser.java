@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -52,15 +53,16 @@ public class InvoicePostingTrackerParser implements TrackerParser {
 					switch (cell.getCellType())
 						{
 						case XSSFCell.CELL_TYPE_NUMERIC:
+							log.info("{}", (cell.getNumericCellValue()));
 
 							break;
 						case XSSFCell.CELL_TYPE_STRING:
-
+							log.info("{}", StringUtils.trim(cell.getStringCellValue()));
 							break;
 						case XSSFCell.CELL_TYPE_BLANK:
-
 							break;
 						default:
+							log.info("{}", cell.getRawValue());
 							break;
 						}
 				}
