@@ -43,6 +43,7 @@ public class InvoicePostingTrackerParser implements TrackerParser {
 	    Cell raw;
 	    Iterator rows = sheet.rowIterator();
 	    int count = 0;
+
 	    while (rows.hasNext()) {
 		count++;
 		row = (XSSFRow) rows.next();
