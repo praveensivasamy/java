@@ -7,9 +7,6 @@ import org.hibernate.engine.jdbc.connections.internal.DriverManagerConnectionPro
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.praveen.commons.enums.AppExceptionIdentifier;
-import com.praveen.commons.exception.ApplicationException;
-
 /**
  * Provide one Connection per thread.
  * <p>
