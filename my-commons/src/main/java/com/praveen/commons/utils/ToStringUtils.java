@@ -96,6 +96,11 @@ public class ToStringUtils {
 	    Collection<?> col = (Collection<?>) o;
 	    return asCommaSeparated(col);
 	}
+
+	if (o instanceof Long || o instanceof Integer || o instanceof Double) {
+	    return format.format(o);
+	}
+
 	if (o instanceof Map<?, ?>) {
 	    StringBuilder s = new StringBuilder();
 	    for (Object key : ((Map<?, ?>) o).keySet()) {
@@ -261,7 +266,6 @@ public class ToStringUtils {
 	return url.substring(url.lastIndexOf(':') + 1);
     }
 
-   
     public static String asCsvString(String delimiter, Object o, String... attributeNames) {
 	StringBuilder res = new StringBuilder();
 	delimiter = delimiter == null ? "," : delimiter;
