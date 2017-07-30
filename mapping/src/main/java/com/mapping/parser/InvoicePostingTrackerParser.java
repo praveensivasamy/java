@@ -8,13 +8,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
 
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.mapping.enums.BilledCurrency;
+import com.mapping.enums.TrimatrixColumn;
+import com.mapping.parser.bo.TrimatrixTracker;
+import com.praveen.commons.hibernate.HibernateProvider;
+import com.praveen.commons.hibernate.JpaDao;
 
 public class InvoicePostingTrackerParser implements TrackerParser {
 
@@ -33,7 +38,7 @@ public class InvoicePostingTrackerParser implements TrackerParser {
 	public static void main(String[] args) {
 		try {
 			InputStream ExcelFileToRead = new FileInputStream(
-					"C:/_Praveen/MyPrograms/github/java/mapping/IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx");
+					"IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx");
 			XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
 
 			XSSFSheet sheet = wb.getSheet("IS-BFS EUC 1.1-Group1");
@@ -41,37 +46,90 @@ public class InvoicePostingTrackerParser implements TrackerParser {
 			XSSFCell cell = null;
 			Iterator rows = sheet.rowIterator();
 			int count = 0;
+
+			HibernateProvider provider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
+			JpaDao srcDao = JpaDao.instance(provider);
+			System.out.println("Connection  : " + srcDao.getSession().isConnected());
+
+			srcDao.beginTransaction();
 			while (rows.hasNext()) {
-				count++;
 				row = (XSSFRow) rows.next();
 				Iterator cells = row.cellIterator();
 
-				while (cells.hasNext()) {
+				if (row.getRowNum() > 1 && row.getCell(5).getStringCellValue().equalsIgnoreCase("COMMERZBANK AG")) {
+					count++;
+					TrimatrixTracker tracker = new TrimatrixTracker();
 
-					cell = (XSSFCell) cells.next();
+					while (cells.hasNext()) {
+						cell = (XSSFCell) cells.next();
+						TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
+						switch (column)
+							{
+							case MAPPED_CUSTOMER:
+								tracker.setMappedCustomer(cell.getStringCellValue());
+								break;
+							case CONSOLIDATED_BILLING_NUMBER:
+								tracker.setConsolidatedBillingNumber(cell.getStringCellValue());
+								break;
 
-					switch (cell.getCellType())
-						{
-						case XSSFCell.CELL_TYPE_NUMERIC:
-							log.info("{}", (cell.getNumericCellValue()));
+							case ROW_TYPE:
 
-							break;
-						case XSSFCell.CELL_TYPE_STRING:
-							log.info("{}", StringUtils.trim(cell.getStringCellValue()));
-							break;
-						case XSSFCell.CELL_TYPE_BLANK:
-							break;
-						default:
-							log.info("{}", cell.getRawValue());
-							break;
-						}
+								tracker.setRowType(cell.getStringCellValue());
+								break;
+
+							case INVOICE_NUMBER:
+
+								if (tracker.getRowType().equalsIgnoreCase("Receipt")) {
+									tracker.setReceiptNumber((long) cell.getNumericCellValue());
+									tracker.setInvoiceNumber("R" + tracker.getReceiptNumber());
+								} else {
+									tracker.setInvoiceNumber(cell.getStringCellValue());
+								}
+								break;
+							case INVOICE_DATE:
+								tracker.setInvoiceDate(cell.getDateCellValue());
+								break;
+							case INVOICE_CURRENCY:
+								tracker.setCurrency(BilledCurrency.EUR);
+								break;
+							case OPEN_AMOUNT:
+								tracker.setOpenAmount((long) cell.getNumericCellValue());
+								break;
+							case OUTSTANDING_DAYS:
+								tracker.setOutstandingDays((int) cell.getNumericCellValue());
+								break;
+							case AGE_BUCKET:
+								tracker.setAgingBucket(cell.getStringCellValue());
+								break;
+							case WON:
+								if (tracker.getRowType().equalsIgnoreCase("Receipt")) {
+									tracker.setWon(0);
+								} else {
+									tracker.setWon((int) cell.getNumericCellValue());
+								}
+								break;
+							case PROJECT_NAME:
+								tracker.setProjectName(cell.getStringCellValue());
+								break;
+							default:
+								break;
+							}
+
+					}
+
+					log.info(tracker.toString());
+
+					srcDao.saveOrUpdate(tracker);
 				}
-				System.out.println("_____________________________");
 			}
 			System.out.println(count);
+			srcDao.flush();
+			srcDao.commit();
+
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
+		} finally {
+			HibernateProvider.tearDownAll();
 		}
 
 	}

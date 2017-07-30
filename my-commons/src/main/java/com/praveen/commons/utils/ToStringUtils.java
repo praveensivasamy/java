@@ -97,7 +97,7 @@ public class ToStringUtils {
 	    return asCommaSeparated(col);
 	}
 
-	if (o instanceof Long || o instanceof Integer || o instanceof Double) {
+	if (o instanceof Long || o instanceof Double) {
 	    return format.format(o);
 	}
 

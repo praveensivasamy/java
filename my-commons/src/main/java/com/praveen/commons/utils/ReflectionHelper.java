@@ -378,7 +378,7 @@ public class ReflectionHelper {
 	} else if (type == Date.class) {
 	    return DateUtils.parse(value);
 	} else {
-	    throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Unuported attribute type: " + type.getName());
+	    throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Unsupported attribute type: " + type.getName());
 	}
     }
 
