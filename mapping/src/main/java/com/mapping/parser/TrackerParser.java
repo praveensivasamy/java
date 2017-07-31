@@ -4,7 +4,9 @@ import org.apache.poi.ss.usermodel.Row;
 
 public interface TrackerParser<T> {
 
-	boolean isValidateTemplate(String template);
+	void initialize(String template);
+
+	boolean isValidTemplate();
 
 	T parse(Row row);
 
