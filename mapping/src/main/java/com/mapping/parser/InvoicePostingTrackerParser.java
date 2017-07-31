@@ -1,136 +1,144 @@
-/**
- * 
- */
 package com.mapping.parser;
 
-import java.io.FileInputStream;
+import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.util.Iterator;
 
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mapping.enums.BilledCurrency;
 import com.mapping.enums.TrimatrixColumn;
 import com.mapping.parser.bo.TrimatrixTracker;
-import com.praveen.commons.hibernate.HibernateProvider;
-import com.praveen.commons.hibernate.JpaDao;
+import com.praveen.commons.enums.AppExceptionIdentifier;
+import com.praveen.commons.exception.ApplicationException;
 
-public class InvoicePostingTrackerParser implements TrackerParser {
+public class InvoicePostingTrackerParser implements TrackerParser<TrimatrixTracker> {
+
+	private static int HEADER_ROW = 0x00; //Firt row in the template
+	private static int CHECK_FILTER_CELL = 0x05; //Fifth column in the template
+	private static String CLIENT_FILTER = "COMMERZBANK AG";
 
 	private static final Logger log = LoggerFactory.getLogger(InvoicePostingTrackerParser.class);
 
 	@Override
-	public void validateTemplate() {
+	public boolean isValidateTemplate(String template) {
+		Sheet sheet = getSheetForParsing(template);
+		return Validator.validateTrimatrixTemplate(sheet.getRow(HEADER_ROW));
+
+	}
+
+	private Sheet getSheetForParsing(String template) throws ApplicationException {
+
+		Workbook wb;
+		Sheet sheet = null;
+		try {
+			wb = WorkbookFactory.create(new File(template));
+			sheet = wb.getSheet("IS-BFS EUC 1.1-Group1");
+
+		} catch (InvalidFormatException e) {
+			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Invalid input file" + template);
+		} catch (IOException e) {
+			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("The input file : " + template + " not found or does not exist!");
+		}
+		return sheet;
 
 	}
 
 	@Override
-	public void parse() {
+	public TrimatrixTracker parse(Row row) {
+		TrimatrixTracker record = new TrimatrixTracker();
+		if (processNextRow(row)) {
+			for (Cell cell : row) {
+				TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
 
+				switch (column)
+					{
+					case MAPPED_CUSTOMER:
+						record.setMappedCustomer(cell.getStringCellValue());
+						break;
+					case CONSOLIDATED_BILLING_NUMBER:
+						record.setConsolidatedBillingNumber(cell.getStringCellValue());
+						break;
+
+					case ROW_TYPE:
+
+						record.setRowType(cell.getStringCellValue());
+						break;
+
+					case INVOICE_NUMBER:
+						if (record.getRowType().equalsIgnoreCase("Receipt") && cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+							record.setReceiptNumber((long) cell.getNumericCellValue());
+							record.setInvoiceNumber("R" + record.getReceiptNumber());
+						} else {
+							record.setInvoiceNumber(cell.getStringCellValue());
+						}
+						break;
+					case INVOICE_DATE:
+						record.setInvoiceDate(cell.getDateCellValue());
+						break;
+					case INVOICE_CURRENCY:
+						record.setCurrency(BilledCurrency.EUR);
+						break;
+					case OPEN_AMOUNT:
+						record.setOpenAmount(cell.getNumericCellValue());
+						break;
+					case OUTSTANDING_DAYS:
+						record.setOutstandingDays((int) cell.getNumericCellValue());
+						break;
+					case AGE_BUCKET:
+						record.setAgingBucket(cell.getStringCellValue());
+						break;
+					case WON:
+						if (record.getRowType().equalsIgnoreCase("Receipt")) {
+							record.setWon(0);
+						} else {
+							record.setWon((int) cell.getNumericCellValue());
+						}
+						break;
+					case PROJECT_NAME:
+						record.setProjectName(cell.getStringCellValue());
+						break;
+					default:
+						break;
+					}
+
+			}
+
+			log.info(record.toString());
+
+		}
+
+		return record;
 	}
 
 	public static void main(String[] args) {
-		try {
-			InputStream ExcelFileToRead = new FileInputStream(
-					"IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx");
-			XSSFWorkbook wb = new XSSFWorkbook(ExcelFileToRead);
+		InvoicePostingTrackerParser parser = new InvoicePostingTrackerParser();
+		String inputFile = "IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx";
 
-			XSSFSheet sheet = wb.getSheet("IS-BFS EUC 1.1-Group1");
-			XSSFRow row;
-			XSSFCell cell = null;
-			Iterator rows = sheet.rowIterator();
-			int count = 0;
+		if (parser.isValidateTemplate(inputFile)) {
 
-			HibernateProvider provider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
-			JpaDao srcDao = JpaDao.instance(provider);
-			System.out.println("Connection  : " + srcDao.getSession().isConnected());
-
-			srcDao.beginTransaction();
-			while (rows.hasNext()) {
-				row = (XSSFRow) rows.next();
-				Iterator cells = row.cellIterator();
-
-				if (row.getRowNum() > 1 && row.getCell(5).getStringCellValue().equalsIgnoreCase("COMMERZBANK AG")) {
-					count++;
-					TrimatrixTracker tracker = new TrimatrixTracker();
-
-					while (cells.hasNext()) {
-						cell = (XSSFCell) cells.next();
-						TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
-						switch (column)
-							{
-							case MAPPED_CUSTOMER:
-								tracker.setMappedCustomer(cell.getStringCellValue());
-								break;
-							case CONSOLIDATED_BILLING_NUMBER:
-								tracker.setConsolidatedBillingNumber(cell.getStringCellValue());
-								break;
-
-							case ROW_TYPE:
-
-								tracker.setRowType(cell.getStringCellValue());
-								break;
-
-							case INVOICE_NUMBER:
-
-								if (tracker.getRowType().equalsIgnoreCase("Receipt")) {
-									tracker.setReceiptNumber((long) cell.getNumericCellValue());
-									tracker.setInvoiceNumber("R" + tracker.getReceiptNumber());
-								} else {
-									tracker.setInvoiceNumber(cell.getStringCellValue());
-								}
-								break;
-							case INVOICE_DATE:
-								tracker.setInvoiceDate(cell.getDateCellValue());
-								break;
-							case INVOICE_CURRENCY:
-								tracker.setCurrency(BilledCurrency.EUR);
-								break;
-							case OPEN_AMOUNT:
-								tracker.setOpenAmount((long) cell.getNumericCellValue());
-								break;
-							case OUTSTANDING_DAYS:
-								tracker.setOutstandingDays((int) cell.getNumericCellValue());
-								break;
-							case AGE_BUCKET:
-								tracker.setAgingBucket(cell.getStringCellValue());
-								break;
-							case WON:
-								if (tracker.getRowType().equalsIgnoreCase("Receipt")) {
-									tracker.setWon(0);
-								} else {
-									tracker.setWon((int) cell.getNumericCellValue());
-								}
-								break;
-							case PROJECT_NAME:
-								tracker.setProjectName(cell.getStringCellValue());
-								break;
-							default:
-								break;
-							}
-
-					}
-
-					log.info(tracker.toString());
-
-					srcDao.saveOrUpdate(tracker);
-				}
+			Sheet sheet = parser.getSheetForParsing(inputFile);
+			for (Row row : sheet) {
+				TrimatrixTracker record = parser.parse(row);
+				parser.save(record);
 			}
-			System.out.println(count);
-			srcDao.flush();
-			srcDao.commit();
-
-		} catch (IOException e) {
-			e.printStackTrace();
-		} finally {
-			HibernateProvider.tearDownAll();
+		} else {
+			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + inputFile);
 		}
+	}
+
+	private static boolean processNextRow(Row row) {
+		return row.getRowNum() > 1 && row.getCell(CHECK_FILTER_CELL).getStringCellValue().contains(CLIENT_FILTER);
+	}
+
+	@Override
+	public void save(TrimatrixTracker record) {
 
 	}
 

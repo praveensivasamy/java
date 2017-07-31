@@ -1,9 +1,13 @@
 package com.mapping.parser;
 
-public interface TrackerParser {
+import org.apache.poi.ss.usermodel.Row;
 
-    void validateTemplate();
+public interface TrackerParser<T> {
 
-    void parse();
+	boolean isValidateTemplate(String template);
+
+	T parse(Row row);
+
+	void save(T record);
 
 }

@@ -59,7 +59,7 @@ public class TrimatrixTracker implements Serializable {
 	private BilledCurrency currency;
 
 	@Column(name = "OPEN_AMOUNT")
-	private long openAmount;
+	private double openAmount;
 
 	@Column(name = "OUTSTANDING_DAYS")
 	private int outstandingDays;
@@ -139,7 +139,7 @@ public class TrimatrixTracker implements Serializable {
 		return openAmount;
 	}
 
-	public void setOpenAmount(long openAmount) {
+	public void setOpenAmount(double openAmount) {
 		this.openAmount = openAmount;
 	}
 
