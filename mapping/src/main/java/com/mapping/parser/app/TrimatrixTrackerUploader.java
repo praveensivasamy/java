@@ -12,6 +12,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mapping.commons.MappingConstants;
 import com.mapping.enums.BilledCurrency;
 import com.mapping.enums.TrimatrixColumn;
 import com.mapping.parser.input.TrimatrixTracker;
@@ -20,19 +21,15 @@ import com.praveen.commons.exception.ApplicationException;
 import com.praveen.commons.hibernate.HibernateProvider;
 import com.praveen.commons.hibernate.JpaDao;
 
-public class TrimatrixTrackerUploader implements TrackerParser<TrimatrixTracker> {
+public class TrimatrixTrackerUploader extends MappingConstants implements TrackerUploader<TrimatrixTracker> {
 
 	private static final Logger log = LoggerFactory.getLogger(TrimatrixTrackerUploader.class);
 
-	private static int HEADER_ROW = 0x00; //Firt row in the template
-	private static int CHECK_FILTER_CELL = 0x05; //Fifth column in the template
-	private static String CLIENT_FILTER = "COMMERZBANK AG";
-
-	private static HibernateProvider provider = null;
-	private static JpaDao dao = null;
+	private HibernateProvider provider = null;
+	private JpaDao dao = null;
 
 	private Workbook workbook = null;
-	private static Sheet sheet = null;
+	private Sheet sheet = null;
 
 	@Override
 	public void initialize(String template) throws ApplicationException {
@@ -41,7 +38,6 @@ public class TrimatrixTrackerUploader implements TrackerParser<TrimatrixTracker>
 				workbook = WorkbookFactory.create(new File(template));
 			}
 			sheet = workbook.getSheet("IS-BFS EUC 1.1-Group1");
-
 		} catch (InvalidFormatException e) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Invalid input file" + template);
 		} catch (IOException e) {
@@ -58,7 +54,6 @@ public class TrimatrixTrackerUploader implements TrackerParser<TrimatrixTracker>
 	public TrimatrixTracker parse(Row row) {
 		TrimatrixTracker record = new TrimatrixTracker();
 		if (processNextRow(row)) {
-			dao.beginTransaction();
 			for (Cell cell : row) {
 
 				TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
@@ -110,7 +105,6 @@ public class TrimatrixTrackerUploader implements TrackerParser<TrimatrixTracker>
 				default:
 					break;
 				}
-
 			}
 			log.info(record.toString());
 		} else {
@@ -120,7 +114,7 @@ public class TrimatrixTrackerUploader implements TrackerParser<TrimatrixTracker>
 	}
 
 	private static boolean processNextRow(Row row) {
-		return (row.getRowNum() > 1) && row.getCell(CHECK_FILTER_CELL).getStringCellValue().contains(CLIENT_FILTER);
+		return (row.getRowNum() > 1) && row.getCell(TRIMATRIX_CHECK_FILTER_CELL).getStringCellValue().contains(TRIMATRIX_CLIENT_FILTER);
 	}
 
 	@Override
@@ -142,10 +136,12 @@ public class TrimatrixTrackerUploader implements TrackerParser<TrimatrixTracker>
 				for (Row row : sheet) {
 					TrimatrixTracker record = uploader.parse(row);
 					if (record != null) {
+						record.setUploadedFile(inputFile);
 						uploader.save(record);
 					}
 				}
 
+				dao.beginTransaction();
 				dao.flushAndClear();
 				dao.commit();
 

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mapping.parser.input;
 
@@ -15,6 +15,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import com.mapping.enums.BilledCurrency;
 import com.praveen.commons.utils.ToStringUtils;
 
@@ -27,7 +30,7 @@ import com.praveen.commons.utils.ToStringUtils;
 public class TrimatrixTracker implements Serializable {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -69,6 +72,19 @@ public class TrimatrixTracker implements Serializable {
 
 	@Column(name = "PROJECT_NAME")
 	private String projectName;
+
+	@Column(name = "UPLOADEDON", updatable = false)
+	@Temporal(TemporalType.TIMESTAMP)
+	@CreationTimestamp
+	private Date uploadTime;
+
+	@Column(name = "MODIFIEDON")
+	@Temporal(TemporalType.TIMESTAMP)
+	@UpdateTimestamp
+	private Date modifiedTime;
+
+	@Column(name = "TEMPLATE_FILE")
+	private String uploadedFile;
 
 	@Override
 	public String toString() {
@@ -170,6 +186,30 @@ public class TrimatrixTracker implements Serializable {
 
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
+	}
+
+	public String getUploadedFile() {
+		return uploadedFile;
+	}
+
+	public void setUploadedFile(String uploadedFile) {
+		this.uploadedFile = uploadedFile;
+	}
+
+	public Date getUploadTime() {
+		return uploadTime;
+	}
+
+	public void setUploadTime(Date uploadTime) {
+		this.uploadTime = uploadTime;
+	}
+
+	public Date getModifiedTime() {
+		return modifiedTime;
+	}
+
+	public void setModifiedTime(Date modifiedTime) {
+		this.modifiedTime = modifiedTime;
 	}
 
 }
