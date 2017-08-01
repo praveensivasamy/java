@@ -87,6 +87,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 					CollectionTracker record = uploader.parse(row);
 					if (record != null) {
 						//record.setUploadedFile(inputFile);
+
 						uploader.save(record);
 					}
 				}

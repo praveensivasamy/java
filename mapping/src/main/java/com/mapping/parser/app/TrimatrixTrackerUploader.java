@@ -24,8 +24,11 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 
 	private static final Logger log = LoggerFactory.getLogger(TrimatrixTrackerUploader.class);
 
-	private static HibernateProvider provider = null;
-	private static JpaDao dao = null;
+	private static HibernateProvider destinationProvider = null;
+	private static JpaDao destinationDao = null;
+
+	private static HibernateProvider sourceProvider = null;
+	private static JpaDao sourceDao = null;
 
 	private static Workbook workbook = null;
 	private static Sheet sheet = null;
@@ -118,41 +121,60 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 	}
 
 	@Override
-	public void save(TrimatrixTracker record) {
-		dao.saveOrUpdate(record);
+	public void save(TrimatrixTracker destinationRecord) {
+
+		destinationDao.saveOrUpdate(destinationRecord);
 	}
 
 	private void run() {
-		String inputFile = "IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx";
-		//String inputFile = "copy.xlsx";
+		//String inputFile = "IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx";
+		String inputFile = "copy.xlsx";
 		TrimatrixTrackerUploader uploader = new TrimatrixTrackerUploader();
 		try {
 			uploader.initialize(inputFile);
 
 			if (uploader.isValidTemplate()) {
-				provider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
-				dao = JpaDao.instance(provider);
+
+				initializeHibernate();
 
 				for (Row row : sheet) {
-					TrimatrixTracker record = uploader.parse(row);
-					if (record != null) {
-						record.setUploadedFile(inputFile);
-						uploader.save(record);
+					TrimatrixTracker destinationRecord = uploader.parse(row);
+					if (destinationRecord != null) {
+						TrimatrixTracker sourceRecord = sourceDao.findByCriteria(TrimatrixTracker.class, "invoiceNumber", destinationRecord.getInvoiceNumber());
+						destinationRecord = TrackerUploaderHelper.getMergedTrimatrixReport(sourceRecord, destinationRecord);
+						if (destinationRecord != null) {
+							destinationRecord.setUploadedFile(inputFile);
+							uploader.save(destinationRecord);
+						}
 					}
 				}
 
-				dao.beginTransaction();
-				dao.flushAndClear();
-				dao.commit();
+				destinationDao.beginTransaction();
+				destinationDao.flushAndClear();
+				destinationDao.commit();
 
 			} else {
 				throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + inputFile);
 			}
-		} catch (Exception e) {
+		} catch (
+
+				Exception e) {
 			e.printStackTrace();
 		} finally {
 			HibernateProvider.tearDownAll();
 		}
+
+	}
+
+	private void initializeHibernate() {
+
+		destinationProvider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
+		destinationDao = JpaDao.instance(destinationProvider);
+		log.info(destinationDao.toString());
+
+		sourceProvider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
+		sourceDao = JpaDao.instance(sourceProvider);
+		log.info(sourceDao.toString());
 
 	}
 
