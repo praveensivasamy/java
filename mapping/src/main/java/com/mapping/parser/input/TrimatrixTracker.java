@@ -124,7 +124,7 @@ public class TrimatrixTracker implements Serializable {
 		this.invoiceNumber = invoiceNumber;
 	}
 
-	public double getReceiptNumber() {
+	public long getReceiptNumber() {
 		return receiptNumber;
 	}
 

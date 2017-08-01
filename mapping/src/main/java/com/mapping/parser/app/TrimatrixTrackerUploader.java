@@ -2,7 +2,6 @@ package com.mapping.parser.app;
 
 import java.io.File;
 import java.io.IOException;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -25,11 +24,11 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 
 	private static final Logger log = LoggerFactory.getLogger(TrimatrixTrackerUploader.class);
 
-	private HibernateProvider provider = null;
-	private JpaDao dao = null;
+	private static HibernateProvider provider = null;
+	private static JpaDao dao = null;
 
-	private Workbook workbook = null;
-	private Sheet sheet = null;
+	private static Workbook workbook = null;
+	private static Sheet sheet = null;
 
 	@Override
 	public void initialize(String template) throws ApplicationException {
@@ -72,6 +71,7 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 				case INVOICE_NUMBER:
 					if (record.getRowType().equalsIgnoreCase("Receipt") && (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)) {
 						record.setReceiptNumber((long) cell.getNumericCellValue());
+						System.out.println(cell.getNumericCellValue());
 						record.setInvoiceNumber("R" + record.getReceiptNumber());
 					} else {
 						record.setInvoiceNumber(cell.getStringCellValue());
