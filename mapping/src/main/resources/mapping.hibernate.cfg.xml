@@ -17,6 +17,6 @@
 		<property name="hibernate.connection.release_mode">auto</property>
 		<property name="hibernate.connection.username">mapping</property>
 		<property name="hibernate.connection.password">mapping</property>
-		<mapping class="com.mapping.parser.app.input.TrimatrixTracker" />
+		<mapping class="com.mapping.parser.input.TrimatrixTracker" />
 	</session-factory>
 </hibernate-configuration>

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 
 import com.mapping.enums.BilledCurrency;
 import com.mapping.enums.TrimatrixColumn;
-import com.mapping.parser.app.input.TrimatrixTracker;
+import com.mapping.parser.input.TrimatrixTracker;
 import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
 import com.praveen.commons.hibernate.HibernateProvider;

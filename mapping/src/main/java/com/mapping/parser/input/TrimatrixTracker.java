@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.mapping.parser.app.input;
+package com.mapping.parser.input;
 
 import java.io.Serializable;
 import java.util.Date;
