@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- <configuration debug="false" scan="true" scanPeriod="30 seconds" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" -->
-<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="logback.xsd"
-	scan="true" scanPeriod="30 seconds">
+<configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="logback.xsd" scan="true" scanPeriod="30 seconds">
 	<statusListener class="ch.qos.logback.core.status.NopStatusListener" />
 	<appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
 		<encoder>
@@ -20,10 +19,12 @@
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="TECH" />
 	</logger>
+
 	<logger name="org.hibernate" level="ERROR" additivity="false">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="TECH" />
 	</logger>
+
 	<logger name="com.mapping" level="INFO" additivity="false">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="TECH" />

@@ -33,6 +33,11 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>3.10-FINAL</version>
 		</dependency>
+		<dependency>
+			<groupId>p6spy</groupId>
+			<artifactId>p6spy</artifactId>
+			<version>3.0.0</version>
+		</dependency>
 	</dependencies>
 
 

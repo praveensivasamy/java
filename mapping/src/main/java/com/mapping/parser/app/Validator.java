@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.mapping.parser;
+package com.mapping.parser.app;
 
 import org.apache.poi.ss.usermodel.Row;
 

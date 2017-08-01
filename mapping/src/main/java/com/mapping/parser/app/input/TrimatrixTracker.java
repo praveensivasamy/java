@@ -1,7 +1,7 @@
 /**
  * 
  */
-package com.mapping.parser.bo;
+package com.mapping.parser.app.input;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -15,8 +15,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.Immutable;
-
 import com.mapping.enums.BilledCurrency;
 import com.praveen.commons.utils.ToStringUtils;
 
@@ -26,7 +24,6 @@ import com.praveen.commons.utils.ToStringUtils;
  */
 @Entity
 @Table(name = "T_TRIMATRIX_REPORT")
-@Immutable
 public class TrimatrixTracker implements Serializable {
 
 	/**
