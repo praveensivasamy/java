@@ -16,6 +16,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.mapping.enums.BilledCurrency;
@@ -27,6 +28,7 @@ import com.praveen.commons.utils.ToStringUtils;
  */
 @Entity
 @Table(name = "T_TRIMATRIX_REPORT")
+@DynamicUpdate
 public class TrimatrixTracker implements Serializable {
 
 	/**
@@ -44,7 +46,7 @@ public class TrimatrixTracker implements Serializable {
 	private String consolidatedBillingNumber;
 
 	@Id
-	@Column(name = "INVOICE_NUMBER")
+	@Column(name = "INVOICE_NUMBER", nullable = false)
 	private String invoiceNumber;
 
 	@Column(name = "RECEIPT_NUMBER")

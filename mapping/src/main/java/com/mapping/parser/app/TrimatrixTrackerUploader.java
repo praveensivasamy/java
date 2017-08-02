@@ -2,6 +2,7 @@ package com.mapping.parser.app;
 
 import java.io.File;
 import java.io.IOException;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -27,9 +28,6 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 	private static HibernateProvider destinationProvider = null;
 	private static JpaDao destinationDao = null;
 
-	private static HibernateProvider sourceProvider = null;
-	private static JpaDao sourceDao = null;
-
 	private static Workbook workbook = null;
 	private static Sheet sheet = null;
 
@@ -47,6 +45,12 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 		}
 	}
 
+	private void initializeHibernate() {
+		destinationProvider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
+		destinationDao = JpaDao.instance(destinationProvider);
+		log.info(destinationDao.toString());
+	}
+
 	@Override
 	public boolean isValidTemplate() {
 		return Validator.validateTrimatrixTemplate(sheet.getRow(HEADER_ROW));
@@ -59,59 +63,58 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 			for (Cell cell : row) {
 
 				TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
-				switch (column) {
-				case MAPPED_CUSTOMER:
-					record.setMappedCustomer(cell.getStringCellValue());
-					break;
-				case CONSOLIDATED_BILLING_NUMBER:
-					record.setConsolidatedBillingNumber(cell.getStringCellValue());
-					break;
+				switch (column)
+					{
+					case MAPPED_CUSTOMER:
+						record.setMappedCustomer(cell.getStringCellValue());
+						break;
+					case CONSOLIDATED_BILLING_NUMBER:
+						record.setConsolidatedBillingNumber(cell.getStringCellValue());
+						break;
 
-				case ROW_TYPE:
-					record.setRowType(cell.getStringCellValue());
-					break;
+					case ROW_TYPE:
+						record.setRowType(cell.getStringCellValue());
+						break;
 
-				case INVOICE_NUMBER:
-					if (record.getRowType().equalsIgnoreCase("Receipt") && (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)) {
-						record.setReceiptNumber((long) cell.getNumericCellValue());
-						System.out.println(cell.getNumericCellValue());
-						record.setInvoiceNumber("R" + record.getReceiptNumber());
-					} else {
-						record.setInvoiceNumber(cell.getStringCellValue());
+					case INVOICE_NUMBER:
+						if (record.getRowType().equalsIgnoreCase("Receipt") && (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)) {
+							record.setReceiptNumber((long) cell.getNumericCellValue());
+							System.out.println(cell.getNumericCellValue());
+							record.setInvoiceNumber("R" + record.getReceiptNumber());
+						} else {
+							record.setInvoiceNumber(cell.getStringCellValue());
+						}
+						break;
+					case INVOICE_DATE:
+						record.setInvoiceDate(cell.getDateCellValue());
+						break;
+					case INVOICE_CURRENCY:
+						record.setCurrency(BilledCurrency.EUR);
+						break;
+					case OPEN_AMOUNT:
+						record.setOpenAmount(cell.getNumericCellValue());
+						break;
+					case OUTSTANDING_DAYS:
+						record.setOutstandingDays((int) cell.getNumericCellValue());
+						break;
+					case AGE_BUCKET:
+						record.setAgingBucket(cell.getStringCellValue());
+						break;
+					case WON:
+						if (record.getRowType().equalsIgnoreCase("Receipt")) {
+							record.setWon(0);
+						} else {
+							record.setWon((int) cell.getNumericCellValue());
+						}
+						break;
+					case PROJECT_NAME:
+						record.setProjectName(cell.getStringCellValue());
+						break;
+					default:
+						break;
 					}
-					break;
-				case INVOICE_DATE:
-					record.setInvoiceDate(cell.getDateCellValue());
-					break;
-				case INVOICE_CURRENCY:
-					record.setCurrency(BilledCurrency.EUR);
-					break;
-				case OPEN_AMOUNT:
-					record.setOpenAmount(cell.getNumericCellValue());
-					break;
-				case OUTSTANDING_DAYS:
-					record.setOutstandingDays((int) cell.getNumericCellValue());
-					break;
-				case AGE_BUCKET:
-					record.setAgingBucket(cell.getStringCellValue());
-					break;
-				case WON:
-					if (record.getRowType().equalsIgnoreCase("Receipt")) {
-						record.setWon(0);
-					} else {
-						record.setWon((int) cell.getNumericCellValue());
-					}
-					break;
-				case PROJECT_NAME:
-					record.setProjectName(cell.getStringCellValue());
-					break;
-				default:
-					break;
-				}
 			}
 			log.info(record.toString());
-		} else {
-			return null;
 		}
 		return record;
 	}
@@ -122,7 +125,6 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 
 	@Override
 	public void save(TrimatrixTracker destinationRecord) {
-
 		destinationDao.saveOrUpdate(destinationRecord);
 	}
 
@@ -132,50 +134,26 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 		TrimatrixTrackerUploader uploader = new TrimatrixTrackerUploader();
 		try {
 			uploader.initialize(inputFile);
-
 			if (uploader.isValidTemplate()) {
-
 				initializeHibernate();
-
 				for (Row row : sheet) {
 					TrimatrixTracker destinationRecord = uploader.parse(row);
-					if (destinationRecord != null) {
-						TrimatrixTracker sourceRecord = sourceDao.findByCriteria(TrimatrixTracker.class, "invoiceNumber", destinationRecord.getInvoiceNumber());
-						destinationRecord = TrackerUploaderHelper.getMergedTrimatrixReport(sourceRecord, destinationRecord);
-						if (destinationRecord != null) {
-							destinationRecord.setUploadedFile(inputFile);
-							uploader.save(destinationRecord);
-						}
+					if (destinationRecord.getInvoiceNumber() != null) {
+						destinationRecord.setUploadedFile(inputFile);
+						uploader.save(destinationRecord);
 					}
 				}
-
 				destinationDao.beginTransaction();
 				destinationDao.flushAndClear();
 				destinationDao.commit();
-
 			} else {
 				throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + inputFile);
 			}
-		} catch (
-
-				Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			HibernateProvider.tearDownAll();
 		}
-
-	}
-
-	private void initializeHibernate() {
-
-		destinationProvider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
-		destinationDao = JpaDao.instance(destinationProvider);
-		log.info(destinationDao.toString());
-
-		sourceProvider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
-		sourceDao = JpaDao.instance(sourceProvider);
-		log.info(sourceDao.toString());
-
 	}
 
 	public static void main(String... args) {
