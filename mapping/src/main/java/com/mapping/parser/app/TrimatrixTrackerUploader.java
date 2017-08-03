@@ -65,56 +65,57 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 			for (Cell cell : row) {
 
 				TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
-				switch (column)
-					{
-					case MAPPED_CUSTOMER:
-						record.setMappedCustomer(cell.getStringCellValue());
-						break;
-					case CONSOLIDATED_BILLING_NUMBER:
-						record.setConsolidatedBillingNumber(cell.getStringCellValue());
-						break;
+				switch (column) {
+				case MAPPED_CUSTOMER:
+					record.setMappedCustomer(cell.getStringCellValue());
+					break;
+				case CONSOLIDATED_BILLING_NUMBER:
+					record.setConsolidatedBillingNumber(cell.getStringCellValue());
+					break;
 
-					case ROW_TYPE:
-						record.setRowType(cell.getStringCellValue());
-						break;
+				case ROW_TYPE:
+					record.setRowType(cell.getStringCellValue());
+					break;
 
-					case INVOICE_NUMBER:
-						if (record.getRowType().equalsIgnoreCase("Receipt") && (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)) {
-							record.setReceiptNumber((long) cell.getNumericCellValue());
-							System.out.println(cell.getNumericCellValue());
-							record.setInvoiceNumber("R" + record.getReceiptNumber());
-						} else {
-							record.setInvoiceNumber(cell.getStringCellValue());
-						}
-						break;
-					case INVOICE_DATE:
-						record.setInvoiceDate(cell.getDateCellValue());
-						break;
-					case INVOICE_CURRENCY:
-						record.setCurrency(BilledCurrency.EUR);
-						break;
-					case OPEN_AMOUNT:
-						record.setOpenAmount(cell.getNumericCellValue());
-						break;
-					case OUTSTANDING_DAYS:
-						record.setOutstandingDays((int) cell.getNumericCellValue());
-						break;
-					case AGE_BUCKET:
-						record.setAgingBucket(cell.getStringCellValue());
-						break;
-					case WON:
-						if (record.getRowType().equalsIgnoreCase("Receipt")) {
-							record.setWon(0);
-						} else {
-							record.setWon((int) cell.getNumericCellValue());
-						}
-						break;
-					case PROJECT_NAME:
-						record.setProjectName(cell.getStringCellValue());
-						break;
-					default:
-						break;
+				case INVOICE_NUMBER:
+					if (record.getRowType().equalsIgnoreCase("Receipt") && (cell.getCellType() == Cell.CELL_TYPE_NUMERIC)) {
+						record.setReceiptNumber((long) cell.getNumericCellValue());
+						record.setInvoiceNumber("R" + record.getReceiptNumber());
+					} else {
+						record.setInvoiceNumber(cell.getStringCellValue());
 					}
+					break;
+				case INVOICE_DATE:
+					record.setInvoiceDate(cell.getDateCellValue());
+					break;
+				case INVOICE_CURRENCY:
+					record.setCurrency(BilledCurrency.EUR);
+					break;
+				case OPEN_AMOUNT:
+					record.setOpenAmount(cell.getNumericCellValue());
+					break;
+				case ORIGINAL_AMOUNT:
+					record.setOriginalAmount(cell.getNumericCellValue());
+					break;
+				case OUTSTANDING_DAYS:
+					record.setOutstandingDays((int) cell.getNumericCellValue());
+					break;
+				case AGE_BUCKET:
+					record.setAgingBucket(cell.getStringCellValue());
+					break;
+				case WON:
+					if (record.getRowType().equalsIgnoreCase("Receipt")) {
+						record.setWon(0);
+					} else {
+						record.setWon((int) cell.getNumericCellValue());
+					}
+					break;
+				case PROJECT_NAME:
+					record.setProjectName(cell.getStringCellValue());
+					break;
+				default:
+					break;
+				}
 			}
 			log.info(record.toString());
 		}
@@ -131,8 +132,8 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 	}
 
 	private void run() {
-		//String inputFile = "IS-BFS EUC 1.1-Group1--Q2 18_Consolidated Outstanding report till 27'th Jul 2017_Trimatrix Report.xlsx";
-		String inputFile = "copy.xlsx";
+		String inputFile = "C:/_work/_data/part-2/IS-BFS EUC 1.1-Group1--Q4 17_Consolidated Outstanding report as of 28'th Feb'17_Trimatrix Report_After AR Closure.xlsx";
+		//String inputFile = "copy.xlsx";
 		TrimatrixTrackerUploader uploader = new TrimatrixTrackerUploader();
 		try {
 			uploader.initialize(inputFile);

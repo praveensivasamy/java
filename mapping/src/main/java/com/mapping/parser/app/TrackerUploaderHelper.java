@@ -16,15 +16,13 @@ public class TrackerUploaderHelper {
 			return destinationRecord;
 		}
 
-		if (sourceRecord != null && destinationRecord == null) {
+		if ((sourceRecord != null) && (destinationRecord == null)) {
 			return sourceRecord;
 		}
 
 		int res = new CompareToBuilder().append(sourceRecord.getInvoiceNumber(), destinationRecord.getInvoiceNumber())
 				.append(sourceRecord.getOpenAmount(), destinationRecord.getOpenAmount())
 				.toComparison();
-
-		System.out.println(res);
 
 		log.info("Source {}", sourceRecord.toString());
 		log.info("Destination {}", destinationRecord.toString());

@@ -150,7 +150,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 	}
 
 	private void run() {
-		String inputFile = "IS-BFS EUC 1.1-Group1--Consolidated Collection Report for _Q4 17_Updated  till 31'st Mar 2017_After AR CLOSURE.xlsx";
+		String inputFile = "C:/_work/_data/part-1/collection/IS-BFS EUC 1.1-Group1--Consolidated Collection Report for _Q4 17_Updated  till 13'th Feb 2017_Trimatrix Report.xlsx";
 		//String inputFile = "copy.xlsx";
 		CollectionReportUploader uploader = new CollectionReportUploader();
 		try {

@@ -63,6 +63,9 @@ public class TrimatrixTracker implements Serializable {
 	@Column(name = "OPEN_AMOUNT")
 	private double openAmount;
 
+	@Column(name = "ORIGINAL_AMOUNT")
+	private double originalAmount;
+
 	@Column(name = "OUTSTANDING_DAYS")
 	private int outstandingDays;
 
@@ -90,7 +93,7 @@ public class TrimatrixTracker implements Serializable {
 
 	@Override
 	public String toString() {
-		return ToStringUtils.asString(this, "mappedCustomer", "rowType", "consolidatedBillingNumber", "invoiceNumber", "receiptNumber", "invoiceDate", "currency",
+		return ToStringUtils.asString(this, "mappedCustomer", "rowType", "consolidatedBillingNumber", "invoiceNumber", "receiptNumber", "invoiceDate", "currency", "originalAmount",
 				"openAmount", "outstandingDays", "agingBucket", "won", "projectName");
 	}
 
@@ -156,6 +159,14 @@ public class TrimatrixTracker implements Serializable {
 
 	public void setOpenAmount(double openAmount) {
 		this.openAmount = openAmount;
+	}
+
+	public double getOriginalAmount() {
+		return originalAmount;
+	}
+
+	public void setOriginalAmount(double originalAmount) {
+		this.originalAmount = originalAmount;
 	}
 
 	public int getOutstandingDays() {
