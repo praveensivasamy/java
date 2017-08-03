@@ -7,8 +7,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -16,8 +14,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.GenericGenerator;
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import com.mapping.enums.BilledCurrency;
@@ -30,20 +26,10 @@ public class CollectionTracker implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "hilo_sequence_generator")
-	@GenericGenerator(name = "hilo_sequence_generator", strategy = "org.hibernate.id.enhanced.SequenceStyleGenerator", parameters = {
-			@Parameter(name = "sequence_name", value = "collection_records"),
-			@Parameter(name = "initial_value", value = "1"),
-			@Parameter(name = "increment_size", value = "3"),
-			@Parameter(name = "optimizer", value = "hilo")
-	})
-	@Id
-	@Column(name = "RECORDID", updatable = false, nullable = false)
-	private long recordId;
-
 	@Column(name = "CUSTOMER_NAME")
 	private String customerName;
 
+	@Id
 	@Column(name = "RECEIPT_NUMBER")
 	private long receiptNumber;
 
@@ -65,6 +51,7 @@ public class CollectionTracker implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dateApplied;
 
+	@Id
 	@Column(name = "INVOICE_NUMBER")
 	private String invoiceNumber;
 
@@ -110,16 +97,45 @@ public class CollectionTracker implements Serializable {
 	@Override
 	public String toString() {
 
-		return ToStringUtils.asString(this, "recordId", "customerName", "receiptNumber", "invoiceNumber");
+		return ToStringUtils.asString(this, "customerName", "receiptNumber", "invoiceNumber");
 	}
 
-	public long getRecordId() {
-		return recordId;
+	public CollectionTracker reset() {
+		this.invoiceNumber = null;
+		this.receiptNumber = 0;
+		return this;
 	}
 
-	public void setRecordId(long recordId) {
-		this.recordId = recordId;
+	/*@Override
+	public boolean equals(Object other) {
+
+		if (this == other) {
+			return true;
+		}
+
+		if (other == null) {
+			return false;
+		}
+
+		if (!(other instanceof CollectionTracker)) {
+			return false;
+		}
+
+		CollectionTracker castOther = (CollectionTracker) other;
+
+		return (getReceiptNumber() == castOther.getReceiptNumber()) &&
+				((getInvoiceNumber() != null) && (castOther.getInvoiceNumber() != null)) &&
+				(getInvoiceNumber().equalsIgnoreCase(castOther.getInvoiceNumber()));
+
 	}
+
+	@Override
+	public int hashCode() {
+		int result = 17;
+		result = (37 * result) + ((int) getReceiptNumber());
+		return (37 * result) + (getInvoiceNumber() == null ? 0 : getInvoiceNumber().hashCode());
+
+	}*/
 
 	public String getCustomerName() {
 		return customerName;

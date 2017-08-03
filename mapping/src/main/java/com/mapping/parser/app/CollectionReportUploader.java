@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.math.BigInteger;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -14,6 +15,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.mapping.commons.MappingConstants;
+import com.mapping.commons.TrackerUploader;
+import com.mapping.commons.Validator;
 import com.mapping.enums.BilledCurrency;
 import com.mapping.enums.CollectionColumn;
 import com.mapping.parser.input.CollectionTracker;
@@ -68,7 +71,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 					record.setCustomerName(cell.getStringCellValue());
 					break;
 				case RECEIPT_NUMBER:
-					if (cell.getCellType() == cell.CELL_TYPE_NUMERIC) {
+					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 						record.setReceiptNumber((long) cell.getNumericCellValue());
 					} else {
 						record.setReceiptNumber(new BigInteger(cell.getStringCellValue()).longValue());
@@ -90,13 +93,16 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 					record.setDateApplied(cell.getDateCellValue());
 					break;
 				case INVOICE_NUMBER:
+					if (StringUtils.isBlank(cell.getStringCellValue())) {
+						return record.reset();
+					}
 					record.setInvoiceNumber(cell.getStringCellValue());
 					break;
 				case INVOICE_DATE:
 					record.setInvoiceDate(cell.getDateCellValue());
 					break;
 				case WON:
-					if (cell.getCellType() == cell.CELL_TYPE_NUMERIC) {
+					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
 						record.setWon((int) cell.getNumericCellValue());
 					} else {
 						record.setWon(0);
@@ -126,12 +132,16 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 				}
 
 			}
+
+			log.info(record.toString());
 		}
 		return record;
 	}
 
 	private static boolean processNextRow(Row row) {
-		return (row.getRowNum() > 1) && row.getCell(COLLECTION_CHECK_FILTER_CELL).getStringCellValue().contains(COLLECTION_CLIENT_FILTER);
+		return (row.getRowNum() > 1)
+				&& row.getCell(COLLECTION_CHECK_FILTER_CELL).getStringCellValue().contains(COLLECTION_CLIENT_FILTER);
+
 	}
 
 	@Override
@@ -151,7 +161,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 
 				for (Row row : sheet) {
 					CollectionTracker record = uploader.parse(row);
-					if (record.getInvoiceNumber() != null) {
+					if ((record.getInvoiceNumber() != null) && (record.getReceiptNumber() != 0)) {
 						//record.setUploadedFile(inputFile);
 
 						uploader.save(record);

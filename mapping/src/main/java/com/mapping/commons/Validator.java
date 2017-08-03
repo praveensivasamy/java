@@ -1,7 +1,7 @@
 /**
  *
  */
-package com.mapping.parser.app;
+package com.mapping.commons;
 
 import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;

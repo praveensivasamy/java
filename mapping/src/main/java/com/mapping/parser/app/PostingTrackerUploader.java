@@ -2,6 +2,7 @@ package com.mapping.parser.app;
 
 import org.apache.poi.ss.usermodel.Row;
 
+import com.mapping.commons.TrackerUploader;
 import com.mapping.parser.input.PostingTracker;
 
 public class PostingTrackerUploader implements TrackerUploader<PostingTracker> {
