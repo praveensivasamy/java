@@ -21,7 +21,7 @@
 		<dependency>
 			<groupId>com.praveen.commons</groupId>
 			<artifactId>my-commons</artifactId>
-			<version>0.0.1-SNAPSHOT</version>
+			<version>0.0.2-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>

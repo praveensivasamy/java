@@ -20,160 +20,160 @@ import com.praveen.commons.exception.ApplicationException;
 
 public class DateUtils {
 
-    private static final SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
-    private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSSS");
+	private static final SimpleDateFormat formatter = new SimpleDateFormat("dd.MM.yyyy");
+	private static final SimpleDateFormat dateTimeFormatter = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss.SSSSS");
 
-    /**
-     * Format as dd.MM.yyyy
-     */
-    public static synchronized String format(Date date) {
-	return formatter.format(date);
-    }
-
-    /**
-     * Format as yyyy-MM-dd hh:mm:ss.SSSSS
-     */
-    public static synchronized String timestampFormat(Date date) {
-	return dateTimeFormatter.format(date);
-    }
-
-    public static DateTime jodaDateTime(Date date) {
-	return new DateTime(date);
-    }
-
-    public static Date getDate(int day, int month, int year) {
-	Calendar cal = Calendar.getInstance();
-	cal.set(year, month, day);
-	return cal.getTime();
-    }
-
-    /**
-     * Parse the string in format dd.MM.yyyy to a {@link Date}
-     */
-    public static synchronized Date parse(String date) {
-	try {
-	    return formatter.parse(date);
-	} catch (ParseException e) {
-	    throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e)
-		    .details("Invalid date format for " + date + ". Expected format: " + formatter.toPattern());
+	/**
+	 * Format as dd.MM.yyyy
+	 */
+	public static synchronized String format(Date date) {
+		return formatter.format(date);
 	}
-    }
 
-    public static synchronized String oracleFormat(Date date) {
-	return "to_date('" + formatter.format(date) + "','dd.mm.yyyy')";
-    }
+	/**
+	 * Format as yyyy-MM-dd hh:mm:ss.SSSSS
+	 */
+	public static synchronized String timestampFormat(Date date) {
+		return dateTimeFormatter.format(date);
+	}
 
-    /**
-     * @return the date formated according with the current DB implementation
-     */
-    public static String sqlFormat(Date date) {
-	return oracleFormat(date);
-    }
+	public static DateTime jodaDateTime(Date date) {
+		return new DateTime(date);
+	}
 
-    /**
-     * Gives the first day of the month from a given day
-     */
-    public static Date getFirstOfMonth(Date aDate) {
-	return setDays(aDate, 0);
-    }
+	public static Date getDate(int day, int month, int year) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month, day);
+		return cal.getTime();
+	}
 
-    /**
-     * Gives the last day of the month from a given day
-     */
-    public static Date getLastOfMonth(Date aDate) {
-	return addDays(ceiling(aDate, Calendar.MONTH), -1);
-    }
+	/**
+	 * Parse the string in format dd.MM.yyyy to a {@link Date}
+	 */
+	public static synchronized Date parse(String date) {
+		try {
+			return formatter.parse(date);
+		} catch (ParseException e) {
+			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e)
+					.details("Invalid date format for " + date + ". Expected format: " + formatter.toPattern());
+		}
+	}
 
-    public static Date getLastOfPrevMonth(Date aDate) {
-	return addDays(truncate(aDate, Calendar.MONTH), -1);
-    }
+	public static synchronized String oracleFormat(Date date) {
+		return "to_date('" + formatter.format(date) + "','dd.mm.yyyy')";
+	}
 
-    public static Date plusMonths(Date aDate, int amount) {
-	return addMonths(aDate, amount);
-    }
+	/**
+	 * @return the date formated according with the current DB implementation
+	 */
+	public static String sqlFormat(Date date) {
+		return oracleFormat(date);
+	}
 
-    public static int get(Date aDate, int field) {
-	return toCalendar(aDate).get(field);
-    }
+	/**
+	 * Gives the first day of the month from a given day
+	 */
+	public static Date getFirstOfMonth(Date aDate) {
+		return setDays(aDate, 0);
+	}
 
-    /**
-     * @return the difference in days between 2 dates
-     */
-    public static long diff(Date date1, Date date2) {
-	long diffInMillies = date2.getTime() - date1.getTime();
-	return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
-    }
+	/**
+	 * Gives the last day of the month from a given day
+	 */
+	public static Date getLastOfMonth(Date aDate) {
+		return addDays(ceiling(aDate, Calendar.MONTH), -1);
+	}
 
-    /**
-     * @return the SQL expression for shifting the given dateField by 'shift' days
-     */
-    public static String shiftDate(String dateField, long shift) {
-	return dateField + " + INTERVAL '" + shift + "' DAY";
-    }
+	public static Date getLastOfPrevMonth(Date aDate) {
+		return addDays(truncate(aDate, Calendar.MONTH), -1);
+	}
 
-    public static Date prevBusinessDate(Date date) {
-	Date res = date;
-	Calendar cal = Calendar.getInstance();
-	int dayOfWeek;
-	do {
-	    res = org.apache.commons.lang.time.DateUtils.addDays(res, -1);
-	    cal.setTime(res);
-	    dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-	} while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
-	return res;
-    }
+	public static Date plusMonths(Date aDate, int amount) {
+		return addMonths(aDate, amount);
+	}
 
-    public static Date addDays(Date d, int shifting) {
-	DateTime dateTime = new DateTime(d);
-	dateTime = dateTime.plusDays(shifting);
-	return dateTime.toDate();
-    }
+	public static int get(Date aDate, int field) {
+		return toCalendar(aDate).get(field);
+	}
 
-    public static int getDifference(Date date1, Date date2) {
-	return Days.daysBetween(new DateTime(date1), new DateTime(date2)).getDays();
-    }
+	/**
+	 * @return the difference in days between 2 dates
+	 */
+	public static long diff(Date date1, Date date2) {
+		long diffInMillies = date2.getTime() - date1.getTime();
+		return TimeUnit.DAYS.convert(diffInMillies, TimeUnit.MILLISECONDS);
+	}
 
-    /**
-     * Check if both dates are from same month and year
-     * 
-     */
-    public static boolean isSameMonth(Date date1, Date date2) {
-	DateTime dateTime1 = new DateTime(date1);
-	DateTime dateTime2 = new DateTime(date2);
-	return (dateTime1.getMonthOfYear() == dateTime2.getMonthOfYear()) && (dateTime1.getYear() == dateTime2.getYear());
-    }
+	/**
+	 * @return the SQL expression for shifting the given dateField by 'shift' days
+	 */
+	public static String shiftDate(String dateField, long shift) {
+		return dateField + " + INTERVAL '" + shift + "' DAY";
+	}
 
-    /**
-     * Month as integer from date
-     * 
-     * @param riskdate
-     * @return
-     */
-    public static int getMonth(Date date) {
-	return new DateTime(date).getMonthOfYear();
-    }
+	public static Date prevBusinessDate(Date date) {
+		Date res = date;
+		Calendar cal = Calendar.getInstance();
+		int dayOfWeek;
+		do {
+			res = org.apache.commons.lang.time.DateUtils.addDays(res, -1);
+			cal.setTime(res);
+			dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
+		} while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
+		return res;
+	}
 
-    /**
-     * Year as integer from date
-     * 
-     * @param riskdate
-     * @return
-     */
-    public static int getYear(Date date) {
-	return new DateTime(date).getYear();
-    }
+	public static Date addDays(Date d, int shifting) {
+		DateTime dateTime = new DateTime(d);
+		dateTime = dateTime.plusDays(shifting);
+		return dateTime.toDate();
+	}
 
-    public static Date min(Date d1, Date d2) {
-	return d1.compareTo(d2) < 0 ? d1 : d2;
-    }
+	public static int getDifference(Date date1, Date date2) {
+		return Days.daysBetween(new DateTime(date1), new DateTime(date2)).getDays();
+	}
 
-    public static Date max(Date d1, Date d2) {
-	return d1.compareTo(d2) > 0 ? d1 : d2;
-    }
+	/**
+	 * Check if both dates are from same month and year
+	 * 
+	 */
+	public static boolean isSameMonth(Date date1, Date date2) {
+		DateTime dateTime1 = new DateTime(date1);
+		DateTime dateTime2 = new DateTime(date2);
+		return (dateTime1.getMonthOfYear() == dateTime2.getMonthOfYear()) && (dateTime1.getYear() == dateTime2.getYear());
+	}
 
-    public static Date addYears(Date date, int years) {
-	DateTime dateTime = new DateTime(date);
-	dateTime = dateTime.plusYears(years);
-	return dateTime.toDate();
-    }
+	/**
+	 * Month as integer from date
+	 * 
+	 * @param riskdate
+	 * @return
+	 */
+	public static int getMonth(Date date) {
+		return new DateTime(date).getMonthOfYear();
+	}
+
+	/**
+	 * Year as integer from date
+	 * 
+	 * @param riskdate
+	 * @return
+	 */
+	public static int getYear(Date date) {
+		return new DateTime(date).getYear();
+	}
+
+	public static Date min(Date d1, Date d2) {
+		return d1.compareTo(d2) < 0 ? d1 : d2;
+	}
+
+	public static Date max(Date d1, Date d2) {
+		return d1.compareTo(d2) > 0 ? d1 : d2;
+	}
+
+	public static Date addYears(Date date, int years) {
+		DateTime dateTime = new DateTime(date);
+		dateTime = dateTime.plusYears(years);
+		return dateTime.toDate();
+	}
 }

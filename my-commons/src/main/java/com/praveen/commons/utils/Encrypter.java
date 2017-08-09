@@ -17,8 +17,8 @@ import org.apache.commons.codec.binary.Base64;
 public class Encrypter {
 
 	private static final char[] PASSWORD = "2102knabzremmoCtcejorPpilC".toCharArray();
-	private static final byte[] SALT = {//
-	(byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12, /**/
+	private static final byte[] SALT = { //
+			(byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12, /**/
 			(byte) 0xde, (byte) 0x33, (byte) 0x10, (byte) 0x12, };
 
 	/**

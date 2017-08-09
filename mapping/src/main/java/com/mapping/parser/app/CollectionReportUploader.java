@@ -64,8 +64,9 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 	public CollectionTracker parse(Row row) {
 		CollectionTracker record = new CollectionTracker();
 		if (processNextRow(row)) {
-			for (Cell cell : row) {
+			loop: for (Cell cell : row) {
 				CollectionColumn column = CollectionColumn.from(cell.getColumnIndex());
+
 				switch (column) {
 				case CUSTOMER_NAME:
 					record.setCustomerName(cell.getStringCellValue());
@@ -94,7 +95,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 					break;
 				case INVOICE_NUMBER:
 					if (StringUtils.isBlank(cell.getStringCellValue())) {
-						return record.reset();
+						break loop;
 					}
 					record.setInvoiceNumber(cell.getStringCellValue());
 					break;
@@ -133,7 +134,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 
 			}
 
-			log.info(record.toString());
+		//log.info(record.toString());
 		}
 		return record;
 	}
@@ -146,12 +147,13 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 
 	@Override
 	public void save(CollectionTracker record) {
+
 		dao.saveOrUpdate(record);
 	}
 
 	private void run() {
-		String inputFile = "C:/_work/_data/part-1/collection/IS-BFS EUC 1.1-Group1--Consolidated Collection Report for _Q4 17_Updated  till 13'th Feb 2017_Trimatrix Report.xlsx";
-		//String inputFile = "copy.xlsx";
+		//String inputFile = "C:/_work/_data/part-1/collection/IS-BFS EUC 1.1-Group1--Consolidated Collection Report for _Q4 17_Updated  till 13'th Feb 2017_Trimatrix Report.xlsx";
+		String inputFile = "C:/_work/github/java/mapping/Collection-Report.xlsx";
 		CollectionReportUploader uploader = new CollectionReportUploader();
 		try {
 			uploader.initialize(inputFile);
@@ -163,7 +165,7 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 					CollectionTracker record = uploader.parse(row);
 					if ((record.getInvoiceNumber() != null) && (record.getReceiptNumber() != 0)) {
 						//record.setUploadedFile(inputFile);
-
+						log.info(record.toString());
 						uploader.save(record);
 					}
 				}

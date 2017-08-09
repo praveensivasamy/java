@@ -11,17 +11,12 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import com.mapping.enums.BilledCurrency;
 import com.praveen.commons.utils.ToStringUtils;
 
-@Entity
+@Entity(name = "T_COLLECTION_REPORT")
 @Table(name = "T_COLLECTION_REPORT")
-@DynamicUpdate
 public class CollectionTracker implements Serializable {
 
 	private static final long serialVersionUID = 1L;
@@ -85,11 +80,6 @@ public class CollectionTracker implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
 	private Date uploadTime;
-
-	@Column(name = "MODIFIEDON")
-	@Temporal(TemporalType.TIMESTAMP)
-	@UpdateTimestamp
-	private Date modifiedTime;
 
 	@Column(name = "TEMPLATE_FILE")
 	private String uploadedFile;
@@ -271,14 +261,6 @@ public class CollectionTracker implements Serializable {
 
 	public void setUploadTime(Date uploadTime) {
 		this.uploadTime = uploadTime;
-	}
-
-	public Date getModifiedTime() {
-		return modifiedTime;
-	}
-
-	public void setModifiedTime(Date modifiedTime) {
-		this.modifiedTime = modifiedTime;
 	}
 
 	public String getUploadedFile() {
