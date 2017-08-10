@@ -3,7 +3,6 @@
  */
 package com.mapping.parser.input;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -17,7 +16,6 @@ import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
-import org.hibernate.annotations.UpdateTimestamp;
 
 import com.mapping.enums.BilledCurrency;
 import com.praveen.commons.utils.ToStringUtils;
@@ -29,11 +27,8 @@ import com.praveen.commons.utils.ToStringUtils;
 @Entity
 @Table(name = "T_TRIMATRIX_REPORT")
 @DynamicUpdate
-public class TrimatrixTracker implements Serializable {
+public class TrimatrixTracker extends BaseMappingEntity {
 
-	/**
-	 *
-	 */
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "MAPPED_CUSTOMER")
@@ -82,11 +77,6 @@ public class TrimatrixTracker implements Serializable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@CreationTimestamp
 	private Date uploadTime;
-
-	@Column(name = "MODIFIEDON")
-	@Temporal(TemporalType.TIMESTAMP)
-	@UpdateTimestamp
-	private Date modifiedTime;
 
 	@Column(name = "TEMPLATE_FILE")
 	private String uploadedFile;
@@ -215,14 +205,6 @@ public class TrimatrixTracker implements Serializable {
 
 	public void setUploadTime(Date uploadTime) {
 		this.uploadTime = uploadTime;
-	}
-
-	public Date getModifiedTime() {
-		return modifiedTime;
-	}
-
-	public void setModifiedTime(Date modifiedTime) {
-		this.modifiedTime = modifiedTime;
 	}
 
 }

@@ -2,7 +2,7 @@
 <!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
                                          "http://www.hibernate.org/dtd/hibernate-configuration-3.0.dtd">
 <hibernate-configuration>
-	<session-factory>
+	<session-factory name="">
 		<property name="hibernate.connection.driver_class">com.p6spy.engine.spy.P6SpyDriver</property>
 		<property name="hibernate.connection.url">jdbc:p6spy:h2:tcp://localhost/~/MAPPING_2017</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.H2Dialect</property>
@@ -11,18 +11,18 @@
 		<property name="hibernate.format_sql">false</property>
 		<property name="hibernate.default_batch_fetch_size">100</property>
 		<property name="hibernate.generate_statistics">false</property>
-		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
+		<property name="hibernate.bytecode.use_reflection_optimizer">true</property>
 		<property name="hibernate.jdbc.use_scrollable_resultset">true</property>
 		<property name="hibernate.cache.provider_class">org.hibernate.cache.internal.NoCacheProvider</property>
 		<property name="hibernate.connection.release_mode">auto</property>
 		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
 		<property name="hibernate.connection.username">mapping</property>
 		<property name="hibernate.connection.password">mapping</property>
+		<property name="hibernate.session_factory.interceptor">com.mapping.commons.EntityInterceptor</property>
+
 
 		<!-- Mapping -->
 		<mapping class="com.mapping.parser.input.TrimatrixTracker" />
 		<mapping class="com.mapping.parser.input.CollectionTracker" />
-
 	</session-factory>
-
 </hibernate-configuration>

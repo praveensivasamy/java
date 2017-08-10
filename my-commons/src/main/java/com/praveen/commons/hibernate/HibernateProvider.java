@@ -64,8 +64,11 @@ public class HibernateProvider {
 	}
 
 	/**
-	 * @param configFile the hibernate configuration file
-	 * @param dbInterceptor a {@link Interceptor} instance, optional. <code>null</code> if no interceptor is required
+	 * @param configFile
+	 *            the hibernate configuration file
+	 * @param dbInterceptor
+	 *            a {@link Interceptor} instance, optional. <code>null</code> if
+	 *            no interceptor is required
 	 * @return the {@link HibernateProvider} instance for the above parameters
 	 */
 	public static HibernateProvider instance(String configFile, Interceptor dbInterceptor) {
@@ -82,10 +85,11 @@ public class HibernateProvider {
 	}
 
 	/**
-	 * Get a new {@link HibernateProvider} instance from the given hibernate cfg file and a connection string in format:
-	 * url#user#password#schema
+	 * Get a new {@link HibernateProvider} instance from the given hibernate cfg
+	 * file and a connection string in format: url#user#password#schema
 	 * <p>
-	 * Required if the db conn parameters are set as system props from command line
+	 * Required if the db conn parameters are set as system props from command
+	 * line
 	 */
 	public static HibernateProvider instance(String configFile, String connString, Interceptor dbInterceptor) {
 		log.info("configFile: {} , connectionString : {} , interceptor : {}", configFile, connString, dbInterceptor);
@@ -143,7 +147,8 @@ public class HibernateProvider {
 	/**
 	 * Close Hibernate {@link SessionFactory}
 	 * <p>
-	 * Make sure this method is called always (use a finally block) - otherwise the application will not terminate
+	 * Make sure this method is called always (use a finally block) - otherwise
+	 * the application will not terminate
 	 */
 	public void tearDown() {
 		log.info("Closing SessionFactory");
