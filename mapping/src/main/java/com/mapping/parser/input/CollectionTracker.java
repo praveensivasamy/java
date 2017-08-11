@@ -1,6 +1,5 @@
 package com.mapping.parser.input;
 
-import java.io.Serializable;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -11,13 +10,13 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-import org.hibernate.annotations.CreationTimestamp;
+
 import com.mapping.enums.BilledCurrency;
 import com.praveen.commons.utils.ToStringUtils;
 
 @Entity(name = "T_COLLECTION_REPORT")
 @Table(name = "T_COLLECTION_REPORT")
-public class CollectionTracker implements Serializable {
+public class CollectionTracker extends AbstractMappingEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -76,18 +75,14 @@ public class CollectionTracker implements Serializable {
 	@Column(name = "COMMENTS")
 	private String comments;
 
-	@Column(name = "UPLOADEDON", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@CreationTimestamp
-	private Date uploadTime;
-
-	@Column(name = "TEMPLATE_FILE")
-	private String uploadedFile;
-
 	@Override
 	public String toString() {
-
 		return ToStringUtils.asString(this, "customerName", "receiptNumber", "invoiceNumber");
+	}
+
+	@Override
+	public boolean isSave() {
+		return (receiptNumber != 0) && (invoiceNumber != null);
 	}
 
 	public CollectionTracker reset() {
@@ -253,22 +248,6 @@ public class CollectionTracker implements Serializable {
 
 	public void setComments(String comments) {
 		this.comments = comments;
-	}
-
-	public Date getUploadTime() {
-		return uploadTime;
-	}
-
-	public void setUploadTime(Date uploadTime) {
-		this.uploadTime = uploadTime;
-	}
-
-	public String getUploadedFile() {
-		return uploadedFile;
-	}
-
-	public void setUploadedFile(String uploadedFile) {
-		this.uploadedFile = uploadedFile;
 	}
 
 }

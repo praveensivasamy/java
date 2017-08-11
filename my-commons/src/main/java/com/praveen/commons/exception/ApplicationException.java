@@ -5,14 +5,14 @@ import com.praveen.commons.utils.ToStringUtils;
 
 /**
  * Write the application exception to database
- * 
+ *
  * @author Praveen
  *
  */
 public class ApplicationException extends RuntimeException {
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 
@@ -27,7 +27,7 @@ public class ApplicationException extends RuntimeException {
 
 	/**
 	 * Write the exception received as is with {@link AppExceptionIdentifier} code
-	 * 
+	 *
 	 * @param identifier
 	 * @param cause
 	 * @return
@@ -42,7 +42,7 @@ public class ApplicationException extends RuntimeException {
 
 	/**
 	 * Write {@link Throwable} received with custom error message
-	 * 
+	 *
 	 * @param errorMessage
 	 * @param causedException
 	 */
@@ -59,7 +59,7 @@ public class ApplicationException extends RuntimeException {
 
 	/**
 	 * Just log these exceptions
-	 * 
+	 *
 	 * @param causedException
 	 */
 	protected ApplicationException(Throwable causedException) {
@@ -68,7 +68,7 @@ public class ApplicationException extends RuntimeException {
 
 	/**
 	 * Hide the cause and write business understandable message.Usually this should never happen
-	 * 
+	 *
 	 * @param errMsg
 	 */
 	protected ApplicationException(String errMsg) {
@@ -77,7 +77,7 @@ public class ApplicationException extends RuntimeException {
 
 	/**
 	 * Write the standard business exception with a valid inentifier
-	 * 
+	 *
 	 * @param identifier
 	 */
 	protected ApplicationException(AppExceptionIdentifier identifier) {
@@ -88,7 +88,7 @@ public class ApplicationException extends RuntimeException {
 
 	/**
 	 * Append step the error occured like login,validation etc.
-	 * 
+	 *
 	 * @param step
 	 * @return
 	 */
@@ -98,8 +98,8 @@ public class ApplicationException extends RuntimeException {
 	}
 
 	/**
-	 * Add some details to the message place holder in the {@link AppExceptionIdentifier}  
-	 * 
+	 * Add some details to the message place holder in the {@link AppExceptionIdentifier}
+	 *
 	 * @param value
 	 * @return
 	 */

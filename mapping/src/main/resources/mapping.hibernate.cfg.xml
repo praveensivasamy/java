@@ -9,7 +9,6 @@
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.use_sql_comments">false</property>
 		<property name="hibernate.format_sql">false</property>
-		<property name="hibernate.default_batch_fetch_size">100</property>
 		<property name="hibernate.generate_statistics">false</property>
 		<property name="hibernate.bytecode.use_reflection_optimizer">true</property>
 		<property name="hibernate.jdbc.use_scrollable_resultset">true</property>
@@ -18,9 +17,7 @@
 		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
 		<property name="hibernate.connection.username">mapping</property>
 		<property name="hibernate.connection.password">mapping</property>
-		<property name="hibernate.session_factory.interceptor">com.mapping.commons.EntityInterceptor</property>
-
-
+		<property name="hibernate.jdbc.batch_size">50</property>
 		<!-- Mapping -->
 		<mapping class="com.mapping.parser.input.TrimatrixTracker" />
 		<mapping class="com.mapping.parser.input.CollectionTracker" />

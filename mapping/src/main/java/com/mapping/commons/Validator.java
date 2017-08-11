@@ -7,7 +7,13 @@ import org.apache.poi.ss.usermodel.Row;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.mapping.parser.app.AbstractTemplateUploader;
+import com.mapping.parser.input.CollectionTracker;
+import com.mapping.parser.input.TrimatrixTracker;
+
 /**
+ * Validations for {@link AbstractTemplateUploader}
+ *
  * @author Praveen Sivasamy
  *
  */
@@ -15,6 +21,13 @@ public class Validator {
 
 	private static final Logger log = LoggerFactory.getLogger(Validator.class);
 
+	/**
+	 * Validate {@link TrimatrixTracker} template
+	 *
+	 * @param row
+	 *            excelseet {@link Row}
+	 * @return yes|no
+	 */
 	public static boolean validateTrimatrixTemplate(Row row) {
 
 		if (log.isDebugEnabled()) {
@@ -33,6 +46,13 @@ public class Validator {
 
 	}
 
+	/**
+	 * Validate {@link CollectionTracker} template
+	 *
+	 * @param row
+	 *            excelsheet {@link Row}
+	 * @return yes|no
+	 */
 	public static boolean validateCollectionTemplate(Row row) {
 
 		if (log.isDebugEnabled()) {

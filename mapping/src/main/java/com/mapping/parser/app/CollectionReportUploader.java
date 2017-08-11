@@ -1,58 +1,26 @@
 package com.mapping.parser.app;
 
 import java.io.File;
-import java.io.IOException;
 import java.math.BigInteger;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mapping.commons.MappingConstants;
-import com.mapping.commons.TrackerUploader;
 import com.mapping.commons.Validator;
 import com.mapping.enums.BilledCurrency;
 import com.mapping.enums.CollectionColumn;
 import com.mapping.parser.input.CollectionTracker;
-import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
-import com.praveen.commons.hibernate.HibernateProvider;
-import com.praveen.commons.hibernate.JpaDao;
 
-public class CollectionReportUploader extends MappingConstants implements TrackerUploader<CollectionTracker> {
+public class CollectionReportUploader extends AbstractTemplateUploader<CollectionTracker> {
 
 	private static final Logger log = LoggerFactory.getLogger(CollectionReportUploader.class);
 
-	private static HibernateProvider provider = null;
-	private static JpaDao dao = null;
-
-	private static Workbook workbook = null;
-	private static Sheet sheet = null;
-
-	@Override
-	public void initialize(String template) {
-
-		try {
-			if (workbook == null) {
-				workbook = WorkbookFactory.create(new File(template));
-			}
-			sheet = workbook.getSheet("IS-BFS EUC 1.1-Group1");
-		} catch (InvalidFormatException e) {
-			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Invalid input file" + template);
-		} catch (IOException e) {
-			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("The input file : " + template + " not found or does not exist!");
-		}
-	}
-
-	private void initializeHibernate() {
-		provider = HibernateProvider.instance("mapping.hibernate.cfg.xml", null);
-		dao = JpaDao.instance(provider);
+	public CollectionReportUploader(File templateFile) throws ApplicationException {
+		super(templateFile);
 	}
 
 	@Override
@@ -67,74 +35,72 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 			loop: for (Cell cell : row) {
 				CollectionColumn column = CollectionColumn.from(cell.getColumnIndex());
 
-				switch (column) {
-				case CUSTOMER_NAME:
-					record.setCustomerName(cell.getStringCellValue());
-					break;
-				case RECEIPT_NUMBER:
-					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						record.setReceiptNumber((long) cell.getNumericCellValue());
-					} else {
-						record.setReceiptNumber(new BigInteger(cell.getStringCellValue()).longValue());
-					}
-					break;
-				case RECEIPT_DATE:
-					record.setReceiptDate(cell.getDateCellValue());
-					break;
-				case RECEIPT_CURRENCY:
-					record.setCurrency(BilledCurrency.EUR);
-					break;
-				case ALLOCATED_AMOUNT:
-					record.setAllocatedAmount(cell.getNumericCellValue());
-					break;
-				case RECEIVED_AMOUNT:
-					record.setReceivedAmount(cell.getNumericCellValue());
-					break;
-				case DATE_APPLED:
-					record.setDateApplied(cell.getDateCellValue());
-					break;
-				case INVOICE_NUMBER:
-					if (StringUtils.isBlank(cell.getStringCellValue())) {
-						break loop;
-					}
-					record.setInvoiceNumber(cell.getStringCellValue());
-					break;
-				case INVOICE_DATE:
-					record.setInvoiceDate(cell.getDateCellValue());
-					break;
-				case WON:
-					if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-						record.setWon((int) cell.getNumericCellValue());
-					} else {
-						record.setWon(0);
-					}
-					break;
-				case INVOICE_CURRENCY:
-					record.setInvoiceCurrency(BilledCurrency.EUR);
-					break;
-				case APPLIED_INVOICE_AMOUNT:
-					record.setAdjustedInvoiceAmount(cell.getNumericCellValue());
-					break;
-				case APPLIED_RECEIPT_AMOUNT:
-					record.setAllocatedReceiptAmount(cell.getNumericCellValue());
-					break;
-				case UNAPPLIED_RECEIPT_AMOUNT:
-					record.setUnappliedReceiptAMount(cell.getNumericCellValue());
-					break;
-				case COMMENTS:
-					record.setComments(cell.getStringCellValue());
-					break;
-				case CONTRACT_ID:
-					record.setContractId(cell.getStringCellValue());
-					break;
-
-				default:
-					break;
+				switch (column)
+				{
+					case CUSTOMER_NAME:
+						record.setCustomerName(cell.getStringCellValue());
+						break;
+					case RECEIPT_NUMBER:
+						if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+							record.setReceiptNumber((long) cell.getNumericCellValue());
+						} else {
+							record.setReceiptNumber(new BigInteger(cell.getStringCellValue()).longValue());
+						}
+						break;
+					case RECEIPT_DATE:
+						record.setReceiptDate(cell.getDateCellValue());
+						break;
+					case RECEIPT_CURRENCY:
+						record.setCurrency(BilledCurrency.EUR);
+						break;
+					case ALLOCATED_AMOUNT:
+						record.setAllocatedAmount(cell.getNumericCellValue());
+						break;
+					case RECEIVED_AMOUNT:
+						record.setReceivedAmount(cell.getNumericCellValue());
+						break;
+					case DATE_APPLED:
+						record.setDateApplied(cell.getDateCellValue());
+						break;
+					case INVOICE_NUMBER:
+						if (StringUtils.isBlank(cell.getStringCellValue())) {
+							record.setInvoiceNumber(null);
+							break loop;
+						}
+						record.setInvoiceNumber(cell.getStringCellValue());
+						break;
+					case INVOICE_DATE:
+						record.setInvoiceDate(cell.getDateCellValue());
+						break;
+					case WON:
+						if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+							record.setWon((int) cell.getNumericCellValue());
+						} else {
+							record.setWon(0);
+						}
+						break;
+					case INVOICE_CURRENCY:
+						record.setInvoiceCurrency(BilledCurrency.EUR);
+						break;
+					case APPLIED_INVOICE_AMOUNT:
+						record.setAdjustedInvoiceAmount(cell.getNumericCellValue());
+						break;
+					case APPLIED_RECEIPT_AMOUNT:
+						record.setAllocatedReceiptAmount(cell.getNumericCellValue());
+						break;
+					case UNAPPLIED_RECEIPT_AMOUNT:
+						record.setUnappliedReceiptAMount(cell.getNumericCellValue());
+						break;
+					case COMMENTS:
+						record.setComments(cell.getStringCellValue());
+						break;
+					case CONTRACT_ID:
+						record.setContractId(cell.getStringCellValue());
+						break;
+					default:
+						break;
 				}
-
 			}
-
-		//log.info(record.toString());
 		}
 		return record;
 	}
@@ -145,47 +111,11 @@ public class CollectionReportUploader extends MappingConstants implements Tracke
 
 	}
 
-	@Override
-	public void save(CollectionTracker record) {
-
-		dao.saveOrUpdate(record);
-	}
-
-	private void run() {
-		//String inputFile = "C:/_work/_data/part-1/collection/IS-BFS EUC 1.1-Group1--Consolidated Collection Report for _Q4 17_Updated  till 13'th Feb 2017_Trimatrix Report.xlsx";
-		String inputFile = "C:/_work/github/java/mapping/Collection-Report.xlsx";
-		CollectionReportUploader uploader = new CollectionReportUploader();
-		try {
-			uploader.initialize(inputFile);
-
-			if (uploader.isValidTemplate()) {
-				initializeHibernate();
-
-				for (Row row : sheet) {
-					CollectionTracker record = uploader.parse(row);
-					if ((record.getInvoiceNumber() != null) && (record.getReceiptNumber() != 0)) {
-						//record.setUploadedFile(inputFile);
-						log.info(record.toString());
-						uploader.save(record);
-					}
-				}
-
-				dao.beginTransaction();
-				dao.flushAndClear();
-				dao.commit();
-
-			} else {
-				throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + inputFile);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			HibernateProvider.tearDownAll();
-		}
-
-	}
-
 	public static void main(String[] args) {
-		new CollectionReportUploader().run();
+		String in = "C:/_work/_data/part-2/IS-BFS EUC 1.1-Group1--Q4 17_Consolidated Outstanding report as of 23'rd Feb'17_Trimatrix Report.xls";
+		File inputFile = new File(in);
+		log.info("Input file {} ", inputFile.getName());
+		new CollectionReportUploader(inputFile).run();
 	}
+
 }

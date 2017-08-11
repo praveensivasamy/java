@@ -1,33 +1,26 @@
 package com.mapping.parser.app;
 
+import java.io.File;
+
 import org.apache.poi.ss.usermodel.Row;
 
-import com.mapping.commons.TrackerUploader;
 import com.mapping.parser.input.PostingTracker;
+import com.praveen.commons.exception.ApplicationException;
 
-public class PostingTrackerUploader implements TrackerUploader<PostingTracker> {
+public class PostingTrackerUploader extends AbstractTemplateUploader<PostingTracker> {
 
-	@Override
-	public void initialize(String template) {
-		// TODO Auto-generated method stub
-
+	public PostingTrackerUploader(File templateFile) throws ApplicationException {
+		super(templateFile);
 	}
 
 	@Override
 	public boolean isValidTemplate() {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
 	public PostingTracker parse(Row row) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
-	public void save(PostingTracker record) {
-		// TODO Auto-generated method stub
-
-	}
 }

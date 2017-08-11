@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicUpdate;
 
 import com.mapping.enums.BilledCurrency;
@@ -27,7 +26,7 @@ import com.praveen.commons.utils.ToStringUtils;
 @Entity
 @Table(name = "T_TRIMATRIX_REPORT")
 @DynamicUpdate
-public class TrimatrixTracker extends BaseMappingEntity {
+public class TrimatrixTracker extends AbstractMappingEntity {
 
 	private static final long serialVersionUID = 1L;
 
@@ -72,14 +71,6 @@ public class TrimatrixTracker extends BaseMappingEntity {
 
 	@Column(name = "PROJECT_NAME")
 	private String projectName;
-
-	@Column(name = "UPLOADEDON", updatable = false)
-	@Temporal(TemporalType.TIMESTAMP)
-	@CreationTimestamp
-	private Date uploadTime;
-
-	@Column(name = "TEMPLATE_FILE")
-	private String uploadedFile;
 
 	@Override
 	public String toString() {
@@ -191,20 +182,9 @@ public class TrimatrixTracker extends BaseMappingEntity {
 		this.projectName = projectName;
 	}
 
-	public String getUploadedFile() {
-		return uploadedFile;
-	}
-
-	public void setUploadedFile(String uploadedFile) {
-		this.uploadedFile = uploadedFile;
-	}
-
-	public Date getUploadTime() {
-		return uploadTime;
-	}
-
-	public void setUploadTime(Date uploadTime) {
-		this.uploadTime = uploadTime;
+	@Override
+	public boolean isSave() {
+		return invoiceNumber != null;
 	}
 
 }

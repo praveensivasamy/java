@@ -1,73 +1,45 @@
 package com.mapping.parser.app;
 
 import java.io.File;
-import java.io.IOException;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.mapping.commons.EntityInterceptor;
-import com.mapping.commons.MappingConstants;
-import com.mapping.commons.TrackerUploader;
 import com.mapping.commons.Validator;
 import com.mapping.enums.BilledCurrency;
 import com.mapping.enums.TrimatrixColumn;
 import com.mapping.parser.input.TrimatrixTracker;
-import com.praveen.commons.enums.AppExceptionIdentifier;
-import com.praveen.commons.exception.ApplicationException;
-import com.praveen.commons.hibernate.HibernateProvider;
-import com.praveen.commons.hibernate.JpaDao;
 
-public class TrimatrixTrackerUploader extends MappingConstants implements TrackerUploader<TrimatrixTracker> {
+/**
+ * Persist TrimatrixReport shared by AR
+ *
+ * @author Praveen Sivasamy
+ *
+ */
+public class TrimatrixTrackerUploader extends AbstractTemplateUploader<TrimatrixTracker> {
 
 	private static final Logger log = LoggerFactory.getLogger(TrimatrixTrackerUploader.class);
 
-	private static HibernateProvider destinationProvider = null;
-	private static JpaDao destinationDao = null;
-
-	private static Workbook workbook = null;
-	private static Sheet sheet = null;
-
-	@Override
-	public void initialize(String template) throws ApplicationException {
-		try {
-			if (workbook == null) {
-				workbook = WorkbookFactory.create(new File(template));
-			}
-			sheet = workbook.getSheet("IS-BFS EUC 1.1-Group1");
-		} catch (InvalidFormatException e) {
-			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Invalid input file" + template);
-		} catch (IOException e) {
-			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("The input file : " + template + " not found or does not exist!");
-		}
+	protected TrimatrixTrackerUploader(File template) {
+		super(template);
 	}
 
-	private void initializeHibernate() {
-		destinationProvider = HibernateProvider.instance("mapping.hibernate.cfg.xml", new EntityInterceptor());
-		destinationDao = JpaDao.instance(destinationProvider);
-		log.info(destinationDao.toString());
-	}
-
-	@Override
+	/**
+	 * Validate {@link TrimatrixTracker}
+	 */
 	public boolean isValidTemplate() {
 		return Validator.validateTrimatrixTemplate(sheet.getRow(HEADER_ROW));
 	}
 
-	@Override
 	public TrimatrixTracker parse(Row row) {
 		TrimatrixTracker record = new TrimatrixTracker();
 		if (processNextRow(row)) {
 			for (Cell cell : row) {
-
 				TrimatrixColumn column = TrimatrixColumn.from(cell.getColumnIndex());
 				switch (column)
-					{
+				{
 					case MAPPED_CUSTOMER:
 						record.setMappedCustomer(cell.getStringCellValue());
 						break;
@@ -117,55 +89,26 @@ public class TrimatrixTrackerUploader extends MappingConstants implements Tracke
 						break;
 					default:
 						break;
-					}
+				}
 			}
 			log.info(record.toString());
 		}
 		return record;
 	}
 
+	/**
+	 * Check if {@link TrimatrixTracker}'s {@link Row} is relevant
+	 *
+	 * @param row
+	 * @return
+	 */
 	private static boolean processNextRow(Row row) {
 		return (row.getRowNum() > 1) && row.getCell(TRIMATRIX_CHECK_FILTER_CELL).getStringCellValue().contains(TRIMATRIX_CLIENT_FILTER);
 	}
 
-	@Override
-	public void save(TrimatrixTracker destinationRecord) {
-		destinationDao.saveOrUpdate(destinationRecord);
-	}
-
-	private void run() {
-		String inputFile = "C:/_work/_data/part-2/IS-BFS EUC 1.1-Group1--Q4 17_Consolidated Outstanding report as of 23'rd Feb'17_Trimatrix Report.xlsx";
-		//String inputFile = "C:/_work/_data/part-2/copy.xlsx";
-
-		//String inputFile = "copy.xlsx";
-		TrimatrixTrackerUploader uploader = new TrimatrixTrackerUploader();
-		try {
-			uploader.initialize(inputFile);
-			if (uploader.isValidTemplate()) {
-				initializeHibernate();
-				destinationDao.beginTransaction();
-				
-				for (Row row : sheet) {
-					TrimatrixTracker destinationRecord = uploader.parse(row);
-					if (destinationRecord.getInvoiceNumber() != null) {
-						destinationRecord.setUploadedFile(inputFile);
-						uploader.save(destinationRecord);
-					}
-				}
-				
-				destinationDao.flushAndClear();
-				destinationDao.commit();
-			} else {
-				throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + inputFile);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			HibernateProvider.tearDownAll();
-		}
-	}
-
 	public static void main(String... args) {
-		new TrimatrixTrackerUploader().run();
+		String in = "C:/_work/_data/part-2/IS-BFS EUC 1.1-Group1--Q4 17_Consolidated Outstanding report as of 23'rd Feb'17_Trimatrix Report.xlsx";
+		File inputFile = new File(in);
+		new TrimatrixTrackerUploader(inputFile).run();
 	}
 }

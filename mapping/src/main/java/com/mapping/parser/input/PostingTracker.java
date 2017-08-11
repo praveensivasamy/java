@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mapping.parser.input;
 
@@ -8,161 +8,166 @@ import java.util.Date;
 
 import com.mapping.enums.Status;
 
-public class PostingTracker implements Serializable {
+public class PostingTracker extends AbstractMappingEntity implements Serializable {
 
-    private static final long serialVersionUID = 1L;
-    private String projectName;
-    private String lebIdentifier;
-    private String ultimatixInvoice;
-    private String manualInvoice;
-    private Date invoiceDate;
-    private String invoiceDescription;
-    private int invoiceAmountTaxed;
-    private int invoiceAmount;
-    private Date postingDate;
-    private Status paymentStatus;
-    private Date paymentDate;
-    private String paymentAmount;
-    private String receiptNumber;
-    private Status closureStatus;
-    private Date closedDate;
-    private Status reportedB2C;
-    private Status reportTracked;
+	private static final long serialVersionUID = 1L;
+	private String projectName;
+	private String lebIdentifier;
+	private String ultimatixInvoice;
+	private String manualInvoice;
+	private Date invoiceDate;
+	private String invoiceDescription;
+	private int invoiceAmountTaxed;
+	private int invoiceAmount;
+	private Date postingDate;
+	private Status paymentStatus;
+	private Date paymentDate;
+	private String paymentAmount;
+	private String receiptNumber;
+	private Status closureStatus;
+	private Date closedDate;
+	private Status reportedB2C;
+	private Status reportTracked;
 
-    public String getProjectName() {
-	return projectName;
-    }
+	@Override
+	public boolean isSave() {
+		return ultimatixInvoice != null;
+	}
 
-    public void setProjectName(String projectName) {
-	this.projectName = projectName;
-    }
+	public String getProjectName() {
+		return projectName;
+	}
 
-    public String getLebIdentifier() {
-	return lebIdentifier;
-    }
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
+	}
 
-    public void setLebIdentifier(String lebIdentifier) {
-	this.lebIdentifier = lebIdentifier;
-    }
+	public String getLebIdentifier() {
+		return lebIdentifier;
+	}
 
-    public String getUltimatixInvoice() {
-	return ultimatixInvoice;
-    }
+	public void setLebIdentifier(String lebIdentifier) {
+		this.lebIdentifier = lebIdentifier;
+	}
 
-    public void setUltimatixInvoice(String ultimatixInvoice) {
-	this.ultimatixInvoice = ultimatixInvoice;
-    }
+	public String getUltimatixInvoice() {
+		return ultimatixInvoice;
+	}
 
-    public String getManualInvoice() {
-	return manualInvoice;
-    }
+	public void setUltimatixInvoice(String ultimatixInvoice) {
+		this.ultimatixInvoice = ultimatixInvoice;
+	}
 
-    public void setManualInvoice(String manualInvoice) {
-	this.manualInvoice = manualInvoice;
-    }
+	public String getManualInvoice() {
+		return manualInvoice;
+	}
 
-    public Date getInvoiceDate() {
-	return invoiceDate;
-    }
+	public void setManualInvoice(String manualInvoice) {
+		this.manualInvoice = manualInvoice;
+	}
 
-    public void setInvoiceDate(Date invoiceDate) {
-	this.invoiceDate = invoiceDate;
-    }
+	public Date getInvoiceDate() {
+		return invoiceDate;
+	}
 
-    public String getInvoiceDescription() {
-	return invoiceDescription;
-    }
+	public void setInvoiceDate(Date invoiceDate) {
+		this.invoiceDate = invoiceDate;
+	}
 
-    public void setInvoiceDescription(String invoiceDescription) {
-	this.invoiceDescription = invoiceDescription;
-    }
+	public String getInvoiceDescription() {
+		return invoiceDescription;
+	}
 
-    public int getInvoiceAmountTaxed() {
-	return invoiceAmountTaxed;
-    }
+	public void setInvoiceDescription(String invoiceDescription) {
+		this.invoiceDescription = invoiceDescription;
+	}
 
-    public void setInvoiceAmountTaxed(int invoiceAmountTaxed) {
-	this.invoiceAmountTaxed = invoiceAmountTaxed;
-    }
+	public int getInvoiceAmountTaxed() {
+		return invoiceAmountTaxed;
+	}
 
-    public int getInvoiceAmount() {
-	return invoiceAmount;
-    }
+	public void setInvoiceAmountTaxed(int invoiceAmountTaxed) {
+		this.invoiceAmountTaxed = invoiceAmountTaxed;
+	}
 
-    public void setInvoiceAmount(int invoiceAmount) {
-	this.invoiceAmount = invoiceAmount;
-    }
+	public int getInvoiceAmount() {
+		return invoiceAmount;
+	}
 
-    public Date getPostingDate() {
-	return postingDate;
-    }
+	public void setInvoiceAmount(int invoiceAmount) {
+		this.invoiceAmount = invoiceAmount;
+	}
 
-    public void setPostingDate(Date postingDate) {
-	this.postingDate = postingDate;
-    }
+	public Date getPostingDate() {
+		return postingDate;
+	}
 
-    public Status getPaymentStatus() {
-	return paymentStatus;
-    }
+	public void setPostingDate(Date postingDate) {
+		this.postingDate = postingDate;
+	}
 
-    public void setPaymentStatus(Status paymentStatus) {
-	this.paymentStatus = paymentStatus;
-    }
+	public Status getPaymentStatus() {
+		return paymentStatus;
+	}
 
-    public Date getPaymentDate() {
-	return paymentDate;
-    }
+	public void setPaymentStatus(Status paymentStatus) {
+		this.paymentStatus = paymentStatus;
+	}
 
-    public void setPaymentDate(Date paymentDate) {
-	this.paymentDate = paymentDate;
-    }
+	public Date getPaymentDate() {
+		return paymentDate;
+	}
 
-    public String getPaymentAmount() {
-	return paymentAmount;
-    }
+	public void setPaymentDate(Date paymentDate) {
+		this.paymentDate = paymentDate;
+	}
 
-    public void setPaymentAmount(String paymentAmount) {
-	this.paymentAmount = paymentAmount;
-    }
+	public String getPaymentAmount() {
+		return paymentAmount;
+	}
 
-    public String getReceiptNumber() {
-	return receiptNumber;
-    }
+	public void setPaymentAmount(String paymentAmount) {
+		this.paymentAmount = paymentAmount;
+	}
 
-    public void setReceiptNumber(String receiptNumber) {
-	this.receiptNumber = receiptNumber;
-    }
+	public String getReceiptNumber() {
+		return receiptNumber;
+	}
 
-    public Status getClosureStatus() {
-	return closureStatus;
-    }
+	public void setReceiptNumber(String receiptNumber) {
+		this.receiptNumber = receiptNumber;
+	}
 
-    public void setClosureStatus(Status closureStatus) {
-	this.closureStatus = closureStatus;
-    }
+	public Status getClosureStatus() {
+		return closureStatus;
+	}
 
-    public Date getClosedDate() {
-	return closedDate;
-    }
+	public void setClosureStatus(Status closureStatus) {
+		this.closureStatus = closureStatus;
+	}
 
-    public void setClosedDate(Date closedDate) {
-	this.closedDate = closedDate;
-    }
+	public Date getClosedDate() {
+		return closedDate;
+	}
 
-    public Status getReportedB2C() {
-	return reportedB2C;
-    }
+	public void setClosedDate(Date closedDate) {
+		this.closedDate = closedDate;
+	}
 
-    public void setReportedB2C(Status reportedB2C) {
-	this.reportedB2C = reportedB2C;
-    }
+	public Status getReportedB2C() {
+		return reportedB2C;
+	}
 
-    public Status getReportTracked() {
-	return reportTracked;
-    }
+	public void setReportedB2C(Status reportedB2C) {
+		this.reportedB2C = reportedB2C;
+	}
 
-    public void setReportTracked(Status reportTracked) {
-	this.reportTracked = reportTracked;
-    }
+	public Status getReportTracked() {
+		return reportTracked;
+	}
+
+	public void setReportTracked(Status reportTracked) {
+		this.reportTracked = reportTracked;
+	}
 
 }
