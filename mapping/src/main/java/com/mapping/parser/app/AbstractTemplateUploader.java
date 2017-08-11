@@ -78,8 +78,8 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 	}
 
 	/**
-	 * Implementation to check if the given {@link AbstractTemplateUploader#templateFile} is
-	 * valid
+	 * Implementation to check if the given
+	 * {@link AbstractTemplateUploader#templateFile} is valid
 	 */
 	@Override
 	public abstract boolean isValidTemplate();
@@ -123,7 +123,8 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 	}
 
 	/**
-	 * check if the {@link AbstractTemplateUploader#templateFile} is already uploaded to DB
+	 * check if the {@link AbstractTemplateUploader#templateFile} is already
+	 * uploaded to DB
 	 *
 	 * @return
 	 */
@@ -131,6 +132,7 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 		initialiseHibernate();
 		log.info("Checking {}.class", persistentClass.getSimpleName());
 		Long count = dao.getCountByCriteria(persistentClass, "uploadedFile", templateFile.getName());
+		tearDown();
 		return count > 0;
 	}
 
@@ -138,7 +140,6 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 
 		if (isTemplateProcessed()) {
 			log.error("Already processed : {}", templateFile);
-			tearDown();
 			return;
 		}
 
