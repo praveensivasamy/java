@@ -11,6 +11,7 @@ import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
+import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.Type;
@@ -63,8 +64,8 @@ public class JpaDao {
 	 *            the entity class
 	 * @param id
 	 *            the entity identifier
-	 * @return the entity with the specifed identifier or <code>null</code> if
-	 *         no such entity exists
+	 * @return the entity with the specifed identifier or <code>null</code> if no
+	 *         such entity exists
 	 */
 	public <T> T find(Class<T> entityClass, Serializable id) {
 		return session.get(entityClass, id);
@@ -147,6 +148,26 @@ public class JpaDao {
 	}
 
 	/**
+	 * Example: getCountByCriteria(Entity.class, number, 12345, string, 'abcd')
+	 *
+	 * @param entityClass
+	 *            the entity class
+	 * @param restrictions
+	 *            the varargs of attributeName/attributeValue restrictions
+	 * @return the count of entities complying with the restrictions
+	 */
+	public Long getCountByCriteria(Class<?> entityClass, Object... restrictions) {
+		Criteria criteria = session.createCriteria(entityClass);
+		for (int i = 0; i < restrictions.length; i++) {
+			criteria.add(Restrictions.eq((String) restrictions[i], restrictions[i + 1]));
+			i++;
+		}
+		Long count = (Long) criteria.setProjection(Projections.rowCount()).uniqueResult();
+		return count == null ? 0 : count;
+
+	}
+
+	/**
 	 * @param entityClass
 	 *            the entity class
 	 * @param queryParameters
@@ -164,7 +185,7 @@ public class JpaDao {
 		}
 		if (l.size() > 1) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
-					.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
+			.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
 		}
 		return ((T) l.get(0));
 	}
@@ -187,7 +208,7 @@ public class JpaDao {
 		}
 		if (l.size() > 1) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
-					.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
+			.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
 		}
 		return ((T) l.get(0));
 	}
@@ -208,8 +229,7 @@ public class JpaDao {
 	 *
 	 * @param t
 	 *            a detached entity instance
-	 * @return the persisted entity (some object instance as the input
-	 *         parameter)
+	 * @return the persisted entity (some object instance as the input parameter)
 	 */
 	public <T> void save(T t) {
 		session.save(t);
@@ -220,8 +240,7 @@ public class JpaDao {
 	 *
 	 * @param t
 	 *            a detached entity instance
-	 * @return the persisted entity (some object instance as the input
-	 *         parameter)
+	 * @return the persisted entity (some object instance as the input parameter)
 	 */
 
 	public <T> void saveOrUpdate(T t) {
@@ -292,6 +311,13 @@ public class JpaDao {
 	}
 
 	/**
+	 * Rollback current transaction incase of exception
+	 */
+	public void rollBack() {
+		session.getTransaction().rollback();
+	}
+
+	/**
 	 * Convenience method to get a {@link ScrollableResults} with the specified
 	 * parameters
 	 *
@@ -320,8 +346,8 @@ public class JpaDao {
 	}
 
 	/**
-	 * {@link #getResultSet(String, int, int, QueryParameter...)} with
-	 * pagination support
+	 * {@link #getResultSet(String, int, int, QueryParameter...)} with pagination
+	 * support
 	 */
 	public ScrollableResults getResultSet(String queryString, int firstResult, int maxResults,
 			QueryParameter... params) {
@@ -350,8 +376,8 @@ public class JpaDao {
 	}
 
 	/**
-	 * {@link #runNativeQuery(String, int, int, QueryParameter...)} with
-	 * pagination support
+	 * {@link #runNativeQuery(String, int, int, QueryParameter...)} with pagination
+	 * support
 	 */
 	public ScrollableResults runNativeQuery(String queryString, int fetchSize, String queryHint,
 			QueryParameter... params) {
@@ -367,8 +393,8 @@ public class JpaDao {
 	}
 
 	/**
-	 * Convenience method to get {@link ScrollableResults} for oracle native SQL
-	 * and transform the results with {@link Transformers}
+	 * Convenience method to get {@link ScrollableResults} for oracle native SQL and
+	 * transform the results with {@link Transformers}
 	 *
 	 * @param queryString
 	 *            - the JPA query string
