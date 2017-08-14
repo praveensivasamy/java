@@ -1,6 +1,7 @@
 package com.journal.controller;
+
 /**
- * 
+ *
  * @author lenovo
  *
  */
@@ -8,14 +9,14 @@ package com.journal.controller;
 //@Controller
 public class TestController {
 
-    //@RequestMapping("/test")
-    public String welcome() {
-	return "view";
-    }
+	//@RequestMapping("/test")
+	public String welcome() {
+		return "view";
+	}
 
-    //@RequestMapping("/test1")
-    public String thankyou() {
-	return "thankyou";
-    }
+	//@RequestMapping("/test1")
+	public String thankyou() {
+		return "thankyou";
+	}
 
 }

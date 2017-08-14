@@ -93,33 +93,33 @@ public class CollectionTracker extends AbstractMappingEntity {
 
 	/*@Override
 	public boolean equals(Object other) {
-
+	
 		if (this == other) {
 			return true;
 		}
-
+	
 		if (other == null) {
 			return false;
 		}
-
+	
 		if (!(other instanceof CollectionTracker)) {
 			return false;
 		}
-
+	
 		CollectionTracker castOther = (CollectionTracker) other;
-
+	
 		return (getReceiptNumber() == castOther.getReceiptNumber()) &&
 				((getInvoiceNumber() != null) && (castOther.getInvoiceNumber() != null)) &&
 				(getInvoiceNumber().equalsIgnoreCase(castOther.getInvoiceNumber()));
-
+	
 	}
-
+	
 	@Override
 	public int hashCode() {
 		int result = 17;
 		result = (37 * result) + ((int) getReceiptNumber());
 		return (37 * result) + (getInvoiceNumber() == null ? 0 : getInvoiceNumber().hashCode());
-
+	
 	}*/
 
 	public String getCustomerName() {

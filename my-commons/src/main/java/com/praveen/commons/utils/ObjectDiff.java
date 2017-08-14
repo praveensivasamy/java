@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Wrapp the comparison mismatches between 2 objects
- * 
+ *
  * @author Praveen
  *
  */
@@ -20,16 +20,17 @@ public class ObjectDiff {
 	private static final NumberFormat nf = NumberFormat.getInstance();
 
 	public static ThreadLocal<NumberFormat> numberFormat = new ThreadLocal<NumberFormat>() {
+		@Override
 		protected NumberFormat initialValue() {
 			return NumberFormat.getInstance();
-		};
+		}
 	};
 
 	private Object object1;
 	private Object object2;
 	private double approximation;
 	private String[] attributes;
-	private List<FieldDiff> fieldDiffs = new ArrayList<ObjectDiff.FieldDiff>();
+	private List<FieldDiff> fieldDiffs = new ArrayList<>();
 
 	public ObjectDiff(Object o1, Object o2, double approximation, String... attributes) {
 		super();
@@ -42,7 +43,7 @@ public class ObjectDiff {
 
 	/**
 	 * Compare the specified numeric/string attributes of the 2 objects , using the given approximation
-	 * 
+	 *
 	 * @return <code>true</code> if the values of all attributes for both objects match, <code>false</code> otherwise
 	 * @throws Exception if any of the specified attributes do not exist in the given Object or is not a numeric type
 	 */

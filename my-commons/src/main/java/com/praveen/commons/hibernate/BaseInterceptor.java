@@ -12,7 +12,7 @@ public class BaseInterceptor extends EmptyInterceptor {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = 1L;
 

@@ -14,7 +14,7 @@ import com.praveen.commons.exception.ApplicationException;
 
 /**
  * Default hibernate {@link Work} implementation for calling db functions with variable number of arguments
- * 
+ *
  * @author Praveen Sivasamy
  *
  */
@@ -40,34 +40,38 @@ class NativeWork implements Work {
 	@Override
 	public void execute(Connection connection) throws SQLException {
 		String argsList = getArgsList(arguments);
-		CallableStatement call;
+		CallableStatement call = null;
 		int paramIndex;
-		if (returnType != 0) {
-			call = connection.prepareCall("{ ? = call " + name + argsList + " }");
-			call.registerOutParameter(1, returnType);
-			paramIndex = 2;
-		} else {
-			call = connection.prepareCall("{call " + name + argsList + " }");
-			paramIndex = 1;
-		}
-		for (Object argument : arguments) {
-			if (argument == null) {
-				call.setObject(paramIndex, null);
-			} else if (argument instanceof String) {
-				call.setString(paramIndex, (String) argument);
-			} else if (argument instanceof Number) {
-				call.setBigDecimal(paramIndex, new BigDecimal(String.valueOf(argument)));
-			} else if (argument instanceof Date) {
-				call.setDate(paramIndex, new java.sql.Date(((Date) argument).getTime()));
+		try {
+			if (returnType != 0) {
+				call = connection.prepareCall("{ ? = call " + name + argsList + " }");
+				call.registerOutParameter(1, returnType);
+				paramIndex = 2;
 			} else {
-				throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details(
-						"Unsuported IN argument type for argument: " + argument + " at position " + (paramIndex - 1) + " and function " + name);
+				call = connection.prepareCall("{call " + name + argsList + " }");
+				paramIndex = 1;
 			}
-			paramIndex++;
-		}
-		call.execute();
-		if (returnType != 0) {
-			result = call.getObject(1);
+			for (Object argument : arguments) {
+				if (argument == null) {
+					call.setObject(paramIndex, null);
+				} else if (argument instanceof String) {
+					call.setString(paramIndex, (String) argument);
+				} else if (argument instanceof Number) {
+					call.setBigDecimal(paramIndex, new BigDecimal(String.valueOf(argument)));
+				} else if (argument instanceof Date) {
+					call.setDate(paramIndex, new java.sql.Date(((Date) argument).getTime()));
+				} else {
+					throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details(
+							"Unsuported IN argument type for argument: " + argument + " at position " + (paramIndex - 1) + " and function " + name);
+				}
+				paramIndex++;
+			}
+			call.execute();
+			if (returnType != 0) {
+				result = call.getObject(1);
+			}
+		} finally {
+			call.close();
 		}
 	}
 
@@ -75,7 +79,7 @@ class NativeWork implements Work {
 	 * @return (?,? ...?) or empty string if arguments is <code>null</code> or empty
 	 */
 	private String getArgsList(Object[] arguments) {
-		if (arguments == null || arguments.length == 0) {
+		if ((arguments == null) || (arguments.length == 0)) {
 			return "";
 		}
 		return "(" + StringUtils.repeat("?", ",", arguments.length) + ")";

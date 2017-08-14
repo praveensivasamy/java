@@ -25,8 +25,7 @@ import com.praveen.commons.hibernate.JpaDao;
  *
  * @author Praveen Sivasamy
  *
- * @param <T>
- *            Entity for persist
+ * @param <T> Entity for persist
  */
 public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> extends MappingConstants implements ITemplateUploader<T> {
 
@@ -66,20 +65,12 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 		} catch (IOException e) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Error processing the file  : " + templateFile);
 		}
+		log.info("Initialised sheet : {}", sheet.getSheetName());
+
 	}
 
 	/**
-	 * initialise the {@link JpaDao}
-	 */
-	private void initialiseHibernate() {
-		configProvider = HibernateProvider.instance(MAPPING_CONFIG_FILE, null);
-		dao = JpaDao.instance(configProvider);
-		log.info(dao.toString());
-	}
-
-	/**
-	 * Implementation to check if the given
-	 * {@link AbstractTemplateUploader#templateFile} is valid
+	 * Implementation to check if the given {@link AbstractTemplateUploader#templateFile} is valid
 	 */
 	@Override
 	public abstract boolean isValidTemplate();
@@ -90,12 +81,19 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 	@Override
 	public abstract T parse(Row row);
 
+	@Override
+	public void save(T destinationRecord) {
+		//TODO: Handle batch
+		dao.saveOrUpdate(destinationRecord);
+	}
+
 	/**
 	 * process the each {@link Row} and persist to database
 	 */
 	protected void process() {
 		if (isValidTemplate()) {
 			try {
+				log.info("processing ...");
 				dao.beginTransaction();
 				for (Row row : sheet) {
 					T destinationRecord = parse(row);
@@ -115,39 +113,47 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 		} else {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + templateFile);
 		}
-	}
-
-	@Override
-	public void save(T destinationRecord) {
-		dao.saveOrUpdate(destinationRecord);
+		log.info("processing done.");
 	}
 
 	/**
-	 * check if the {@link AbstractTemplateUploader#templateFile} is already
-	 * uploaded to DB
 	 *
-	 * @return
 	 */
-	private boolean isTemplateProcessed() {
-		initialiseHibernate();
-		log.info("Checking {}.class", persistentClass.getSimpleName());
-		Long count = dao.getCountByCriteria(persistentClass, "uploadedFile", templateFile.getName());
-		tearDown();
-		return count > 0;
-	}
-
 	protected void run() {
-
 		if (isTemplateProcessed()) {
 			log.error("Already processed : {}", templateFile);
 			return;
 		}
-
 		initialise();
 		process();
 		tearDown();
 	}
 
+	/**
+	 * initialise the {@link JpaDao}
+	 */
+	private void initialiseHibernate() {
+		configProvider = HibernateProvider.instance(MAPPING_CONFIG_FILE, null);
+		dao = JpaDao.instance(configProvider);
+		log.info(dao.toString());
+	}
+
+	/**
+	 * check if the {@link AbstractTemplateUploader#templateFile} is already uploaded to DB
+	 *
+	 * @return
+	 */
+	private boolean isTemplateProcessed() {
+		initialiseHibernate();
+		log.debug("Checking {}.class", persistentClass.getSimpleName());
+		Long count = dao.getCountByCriteria(persistentClass, "uploadedFile", templateFile.getName());
+		tearDown();
+		return count > 0;
+	}
+
+	/**
+	 * Cleanup and housekeeping
+	 */
 	private void tearDown() {
 		HibernateProvider.tearDownAll();
 	}

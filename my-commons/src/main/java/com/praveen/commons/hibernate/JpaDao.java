@@ -60,20 +60,16 @@ public class JpaDao {
 	}
 
 	/**
-	 * @param entityClass
-	 *            the entity class
-	 * @param id
-	 *            the entity identifier
-	 * @return the entity with the specifed identifier or <code>null</code> if no
-	 *         such entity exists
+	 * @param entityClass the entity class
+	 * @param id the entity identifier
+	 * @return the entity with the specifed identifier or <code>null</code> if no such entity exists
 	 */
 	public <T> T find(Class<T> entityClass, Serializable id) {
 		return session.get(entityClass, id);
 	}
 
 	/**
-	 * @param id
-	 *            JPA query string
+	 * @param id JPA query string
 	 * @return the {@link List} of entities
 	 */
 	@SuppressWarnings("unchecked")
@@ -82,12 +78,9 @@ public class JpaDao {
 	}
 
 	/**
-	 * @param queryString
-	 *            the jpa query string
-	 * @param firstResult
-	 *            the count of firstResult, -1 if not relevant
-	 * @param maxResults
-	 *            the max size of the results, -1 if not relevant
+	 * @param queryString the jpa query string
+	 * @param firstResult the count of firstResult, -1 if not relevant
+	 * @param maxResults the max size of the results, -1 if not relevant
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
@@ -103,8 +96,7 @@ public class JpaDao {
 	}
 
 	/**
-	 * @param entityClass
-	 *            the entity class
+	 * @param entityClass the entity class
 	 * @return all entities of the specified type
 	 */
 	@SuppressWarnings("unchecked")
@@ -113,10 +105,8 @@ public class JpaDao {
 	}
 
 	/**
-	 * @param entityClass
-	 *            the entity class
-	 * @param queryParameters
-	 *            the array of {@link QueryParameter}
+	 * @param entityClass the entity class
+	 * @param queryParameters the array of {@link QueryParameter}
 	 * @return the list of entities complying with the query parameters
 	 */
 	@SuppressWarnings("unchecked")
@@ -131,10 +121,8 @@ public class JpaDao {
 	/**
 	 * Example: queryByCriteria(Trade.class, posCode, 12345, refNoLocal, 'abcd')
 	 *
-	 * @param entityClass
-	 *            the entity class
-	 * @param restrictions
-	 *            the varargs of attributeName/attributeValue restrictions
+	 * @param entityClass the entity class
+	 * @param restrictions the varargs of attributeName/attributeValue restrictions
 	 * @return the list of entities complying with the restrictions
 	 */
 	@SuppressWarnings("unchecked")
@@ -150,10 +138,8 @@ public class JpaDao {
 	/**
 	 * Example: getCountByCriteria(Entity.class, number, 12345, string, 'abcd')
 	 *
-	 * @param entityClass
-	 *            the entity class
-	 * @param restrictions
-	 *            the varargs of attributeName/attributeValue restrictions
+	 * @param entityClass the entity class
+	 * @param restrictions the varargs of attributeName/attributeValue restrictions
 	 * @return the count of entities complying with the restrictions
 	 */
 	public Long getCountByCriteria(Class<?> entityClass, Object... restrictions) {
@@ -168,14 +154,10 @@ public class JpaDao {
 	}
 
 	/**
-	 * @param entityClass
-	 *            the entity class
-	 * @param queryParameters
-	 *            the array of {@link QueryParameter}
-	 * @return the single entity complying with the query parameters or
-	 *         <code>null</code> in none exists
-	 * @throws FTPException
-	 *             if more than one entity is found
+	 * @param entityClass the entity class
+	 * @param queryParameters the array of {@link QueryParameter}
+	 * @return the single entity complying with the query parameters or <code>null</code> in none exists
+	 * @throws FTPException if more than one entity is found
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T findByCriteria(Class<T> entityClass, QueryParameter... queryParameters) {
@@ -185,20 +167,16 @@ public class JpaDao {
 		}
 		if (l.size() > 1) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
-			.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
+					.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
 		}
 		return ((T) l.get(0));
 	}
 
 	/**
-	 * @param entityClass
-	 *            the entity class
-	 * @param restrictions
-	 *            the varargs of attributeName/attributeValue restrictions
-	 * @return the single entity complying with the restrictions or
-	 *         <code>null</code> if none exists
-	 * @throws FTPException
-	 *             if more than one entity is found
+	 * @param entityClass the entity class
+	 * @param restrictions the varargs of attributeName/attributeValue restrictions
+	 * @return the single entity complying with the restrictions or <code>null</code> if none exists
+	 * @throws FTPException if more than one entity is found
 	 */
 	@SuppressWarnings("unchecked")
 	public <T> T findByCriteria(Class<T> entityClass, Object... restrictions) {
@@ -208,7 +186,7 @@ public class JpaDao {
 		}
 		if (l.size() > 1) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
-			.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
+					.details("More than one entity instance of type " + entityClass.getSimpleName() + "found ");
 		}
 		return ((T) l.get(0));
 	}
@@ -216,8 +194,7 @@ public class JpaDao {
 	/**
 	 * Retrieve the named Hibernate query, defined in the orm.xml file
 	 *
-	 * @param queryName
-	 *            the name of the query
+	 * @param queryName the name of the query
 	 * @return the resulting {@link Query} object
 	 */
 	public Query getNamedQuery(String queryName) {
@@ -227,8 +204,7 @@ public class JpaDao {
 	/**
 	 * Persist the given entity by {@link Session#save(Object)}
 	 *
-	 * @param t
-	 *            a detached entity instance
+	 * @param t a detached entity instance
 	 * @return the persisted entity (some object instance as the input parameter)
 	 */
 	public <T> void save(T t) {
@@ -238,8 +214,7 @@ public class JpaDao {
 	/**
 	 * Persist the given entity by {@link Session#saveOrUpdate(Object)}
 	 *
-	 * @param t
-	 *            a detached entity instance
+	 * @param t a detached entity instance
 	 * @return the persisted entity (some object instance as the input parameter)
 	 */
 
@@ -287,8 +262,7 @@ public class JpaDao {
 	/**
 	 * Flush and clear the current session
 	 * <p>
-	 * To be used to manage bulk inserts, see
-	 * {@link http://docs.jboss.org/hibernate/orm/3.3/reference/en/html/batch.html#batch-inserts}
+	 * To be used to manage bulk inserts, see {@link http://docs.jboss.org/hibernate/orm/3.3/reference/en/html/batch.html#batch-inserts}
 	 */
 	public void flushAndClear() {
 		log.trace("Flush and log the current session");
@@ -318,18 +292,13 @@ public class JpaDao {
 	}
 
 	/**
-	 * Convenience method to get a {@link ScrollableResults} with the specified
-	 * parameters
+	 * Convenience method to get a {@link ScrollableResults} with the specified parameters
 	 *
 	 * @param session
-	 * @param queryString
-	 *            the JPA query string
-	 * @param fetchSize
-	 *            the ResultSet fetch size
-	 * @param queryHint
-	 *            the Oracle query hint
-	 * @param params
-	 *            the array of {@link QueryParameter}s
+	 * @param queryString the JPA query string
+	 * @param fetchSize the ResultSet fetch size
+	 * @param queryHint the Oracle query hint
+	 * @param params the array of {@link QueryParameter}s
 	 * @return
 	 */
 	public ScrollableResults getResultSet(String queryString, int fetchSize, String queryHint,
@@ -346,8 +315,7 @@ public class JpaDao {
 	}
 
 	/**
-	 * {@link #getResultSet(String, int, int, QueryParameter...)} with pagination
-	 * support
+	 * {@link #getResultSet(String, int, int, QueryParameter...)} with pagination support
 	 */
 	public ScrollableResults getResultSet(String queryString, int firstResult, int maxResults,
 			QueryParameter... params) {
@@ -376,8 +344,7 @@ public class JpaDao {
 	}
 
 	/**
-	 * {@link #runNativeQuery(String, int, int, QueryParameter...)} with pagination
-	 * support
+	 * {@link #runNativeQuery(String, int, int, QueryParameter...)} with pagination support
 	 */
 	public ScrollableResults runNativeQuery(String queryString, int fetchSize, String queryHint,
 			QueryParameter... params) {
@@ -393,21 +360,14 @@ public class JpaDao {
 	}
 
 	/**
-	 * Convenience method to get {@link ScrollableResults} for oracle native SQL and
-	 * transform the results with {@link Transformers}
+	 * Convenience method to get {@link ScrollableResults} for oracle native SQL and transform the results with {@link Transformers}
 	 *
-	 * @param queryString
-	 *            - the JPA query string
-	 * @param fetchSize
-	 *            - the ResultSet fetch size
-	 * @param queryHint
-	 *            - Oracle HINTs
-	 * @param transformer
-	 *            - A bean to store results
-	 * @param columnAliasMapping
-	 *            - {@link ColumnAliasMapping}
-	 * @param params
-	 *            - {@link QueryParameter}
+	 * @param queryString - the JPA query string
+	 * @param fetchSize - the ResultSet fetch size
+	 * @param queryHint - Oracle HINTs
+	 * @param transformer - A bean to store results
+	 * @param columnAliasMapping - {@link ColumnAliasMapping}
+	 * @param params - {@link QueryParameter}
 	 * @return
 	 */
 	public ScrollableResults runTransFormableResultSQLQuery(String queryString, int fetchSize, String queryHint,
@@ -461,8 +421,7 @@ public class JpaDao {
 	/**
 	 * Invoke the specified stored procedure in the given {@link Session}
 	 *
-	 * @param procedureName
-	 *            the procedure in arguments
+	 * @param procedureName the procedure in arguments
 	 * @param arguments
 	 */
 	public void invokeSqlProcedure(final String procedureName, Object... arguments) {
@@ -475,13 +434,9 @@ public class JpaDao {
 	 * Invoke the specified stored function in the given {@link Session}
 	 * <p>
 	 *
-	 * @param functionName
-	 *            the name of the stored function
-	 * @param returnType
-	 *            the returnType, ie one of the constants defined in the
-	 *            {@link Types} class
-	 * @param arguments
-	 *            the function in arguments
+	 * @param functionName the name of the stored function
+	 * @param returnType the returnType, ie one of the constants defined in the {@link Types} class
+	 * @param arguments the function in arguments
 	 */
 	public Object invokeSqlFunction(final String functionName, int returnType, Object... arguments) {
 		log.debug("Invoking native SQL function: {}", functionName);

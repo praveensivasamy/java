@@ -1,12 +1,13 @@
 package com.praveen.commons.hibernate;
 
+import org.hibernate.transform.ResultTransformer;
 import org.hibernate.type.Type;
 
 import com.praveen.commons.utils.ToStringUtils;
 
 /**
  * Map colum alias of query with bean for {@link ResultTransformer}
- * 
+ *
  * @author Praveen Sivasamy
  *
  */

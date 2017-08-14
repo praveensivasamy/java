@@ -13,25 +13,25 @@ import com.journal.config.app.AppConfiguration;
  */
 public class WebAppInitializer extends AbstractAnnotationConfigDispatcherServletInitializer {
 
-    private static final Logger log = LoggerFactory.getLogger(WebAppInitializer.class);
+	private static final Logger log = LoggerFactory.getLogger(WebAppInitializer.class);
 
-    @Override
-    protected Class<?>[] getRootConfigClasses() {
-	if (log.isDebugEnabled()) {
-	    log.debug("Loading Spring Application Configuration");
+	@Override
+	protected Class<?>[] getRootConfigClasses() {
+		if (log.isDebugEnabled()) {
+			log.debug("Loading Spring Application Configuration");
+		}
+
+		return new Class[] { AppConfiguration.class };
 	}
 
-	return new Class[] { AppConfiguration.class };
-    }
+	@Override
+	protected String[] getServletMappings() {
+		return new String[] { "/" };
+	}
 
-    @Override
-    protected String[] getServletMappings() {
-	return new String[] { "/" };
-    }
-
-    @Override
-    protected Class<?>[] getServletConfigClasses() {
-	return null;
-    }
+	@Override
+	protected Class<?>[] getServletConfigClasses() {
+		return null;
+	}
 
 }

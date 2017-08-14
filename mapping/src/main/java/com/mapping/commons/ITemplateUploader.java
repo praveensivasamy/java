@@ -10,8 +10,7 @@ import com.mapping.parser.input.AbstractMappingEntity;
  *
  * @author Praveen Sivasamy
  *
- * @param <T>
- *            {@link AbstractMappingEntity}
+ * @param <T> {@link AbstractMappingEntity}
  */
 public interface ITemplateUploader<T extends AbstractMappingEntity> {
 

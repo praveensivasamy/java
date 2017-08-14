@@ -119,7 +119,7 @@ public class DateUtils {
 			res = org.apache.commons.lang.time.DateUtils.addDays(res, -1);
 			cal.setTime(res);
 			dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
-		} while (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY);
+		} while ((dayOfWeek == Calendar.SATURDAY) || (dayOfWeek == Calendar.SUNDAY));
 		return res;
 	}
 
@@ -135,7 +135,7 @@ public class DateUtils {
 
 	/**
 	 * Check if both dates are from same month and year
-	 * 
+	 *
 	 */
 	public static boolean isSameMonth(Date date1, Date date2) {
 		DateTime dateTime1 = new DateTime(date1);
@@ -145,7 +145,7 @@ public class DateUtils {
 
 	/**
 	 * Month as integer from date
-	 * 
+	 *
 	 * @param riskdate
 	 * @return
 	 */
@@ -155,7 +155,7 @@ public class DateUtils {
 
 	/**
 	 * Year as integer from date
-	 * 
+	 *
 	 * @param riskdate
 	 * @return
 	 */

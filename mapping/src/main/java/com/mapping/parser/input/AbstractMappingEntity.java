@@ -35,8 +35,7 @@ public abstract class AbstractMappingEntity implements Serializable {
 	private String uploadedFile;
 
 	/**
-	 * Decision maker if the {@link AbstractMappingEntity} is eligible to be
-	 * persisted in DB
+	 * Decision maker if the {@link AbstractMappingEntity} is eligible to be persisted in DB
 	 */
 	public abstract boolean isSave();
 

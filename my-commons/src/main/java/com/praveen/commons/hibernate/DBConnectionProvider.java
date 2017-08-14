@@ -11,18 +11,19 @@ import org.slf4j.LoggerFactory;
  * Provide one Connection per thread.
  * <p>
  * Creation of connection object is done by the Hibernate base class {@link DriverManagerConnectionProviderImpl}
- * 
+ *
  * @author Praveen
  *
  */
 public class DBConnectionProvider extends DriverManagerConnectionProviderImpl {
 
+	private static final long serialVersionUID = 1L;
+
 	private static volatile int totalRequests = 0;
 	private static volatile int requestsServedFromCache = 0;
 	private static final Logger log = LoggerFactory.getLogger(DBConnectionProvider.class);
-	private static final long serialVersionUID = 1L;
 
-	private ThreadLocal<Connection> connections = new ThreadLocal<Connection>();
+	private ThreadLocal<Connection> connections = new ThreadLocal<>();
 	private static DBConnectionProvider instance;
 
 	public DBConnectionProvider() {
@@ -32,16 +33,21 @@ public class DBConnectionProvider extends DriverManagerConnectionProviderImpl {
 	@Override
 	public Connection getConnection() throws SQLException {
 		totalRequests++;
-		if (connections.get() == null) {
-			Connection conn = super.getConnection();
-			log.info("Setting new " + conn + " to the ThreadLocal pool");
-			addShutDownHook(conn);
-			connections.set(conn);
-		} else {
-			requestsServedFromCache++;
+		Connection conn = null;
+		try {
+			if (connections.get() == null) {
+				conn = super.getConnection();
+				log.info("Setting new " + conn + " to the ThreadLocal pool");
+				addShutDownHook(conn);
+				connections.set(conn);
+			} else {
+				requestsServedFromCache++;
+			}
+			log.info("Returning existing ThreadLocal connection");
+			return connections.get();
+		} finally {
+			conn.close();
 		}
-		log.info("Returning existing ThreadLocal connection");
-		return connections.get();
 	}
 
 	public static DBConnectionProvider instance() {
@@ -58,9 +64,8 @@ public class DBConnectionProvider extends DriverManagerConnectionProviderImpl {
 	}
 
 	private static void addShutDownHook(final Connection connection) {
-		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
-			@Override
-			public void run() {
+		Runtime.getRuntime().addShutdownHook(new Thread(() ->
+			{
 				if (connection != null) {
 					try {
 						System.out.println("Closing Oracle DB connection ...");
@@ -68,8 +73,7 @@ public class DBConnectionProvider extends DriverManagerConnectionProviderImpl {
 					} catch (SQLException ignore) {
 					}
 				}
-			}
-		}));
+			}));
 	}
 
 }

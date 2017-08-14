@@ -79,7 +79,7 @@ public class FileUtil {
 	public static List<String> readLines(String fileName, boolean ignoreComment) {
 		BufferedReader reader = null;
 		try {
-			List<String> res = new ArrayList<String>();
+			List<String> res = new ArrayList<>();
 			reader = new BufferedReader(new InputStreamReader(Thread.currentThread().getContextClassLoader().getResourceAsStream(fileName)));
 			String line = null;
 			while ((line = reader.readLine()) != null) {
@@ -105,9 +105,11 @@ public class FileUtil {
 
 	public static Properties getProperties(String resource) {
 		Properties res = new Properties();
+		InputStream is = null;
 		try {
-			InputStream is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+			is = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
 			if (is == null) {
+
 				return null;
 			}
 			res.load(is);
@@ -115,22 +117,28 @@ public class FileUtil {
 		} catch (IOException e) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e)
 					.details("IOException trying to load properties from" + resource);
+		} finally {
+			try {
+				is.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
 	/**
-	 * This method generates csv files with custom separator.The <code> String... separator</code> param is optional.
-	 * Only first option of the separator is considered rest options are discarded.
-	 * 
+	 * This method generates csv files with custom separator.The <code> String... separator</code> param is optional. Only first option of the
+	 * separator is considered rest options are discarded.
+	 *
 	 * @param fileName the intended csv file name
 	 * @param separator only one value is considered <br>
-	 * 	   <br>
-	 *            <code>if (separator[0] == null) {separator[0] = ToStringUtils.CSV_SEP; }</code>
-	 * 
+	 * <br>
+	 * <code>if (separator[0] == null) {separator[0] = ToStringUtils.CSV_SEP; }</code>
+	 *
 	 */
 	public static void writeSeparator(String fileName, String... separator) {
 		String sep = ToStringUtils.CSV_SEP;
-		if (separator.length > 0 && separator[0] != null) {
+		if ((separator.length > 0) && (separator[0] != null)) {
 			sep = separator[0];
 		}
 		writeToFile(fileName, "sep=" + sep + "\n", false);

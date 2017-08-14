@@ -30,7 +30,7 @@ import com.praveen.commons.exception.ApplicationException;
 
 /**
  * Reusable ReflectionHelper
- * 
+ *
  * @author Praveen
  *
  */
@@ -38,27 +38,29 @@ import com.praveen.commons.exception.ApplicationException;
 public class ReflectionHelper {
 
 	/**
-	 * Cache the already introspected {@link Class#getFields()} The cache is stored per thread to insure thread-safety
-	 * without synchronization oveerhead
+	 * Cache the already introspected {@link Class#getFields()} The cache is stored per thread to insure thread-safety without synchronization
+	 * oveerhead
 	 */
 	public static final ThreadLocal<Map<Class<?>, Map<String, Field>>> classFieldsCache = new ThreadLocal<Map<Class<?>, Map<String, Field>>>() {
+		@Override
 		protected Map<java.lang.Class<?>, java.util.Map<String, Field>> initialValue() {
-			return new HashMap<Class<?>, Map<String, Field>>();
-		};
+			return new HashMap<>();
+		}
 	};
 
 	/** Cache the already introspected PropertyDescriptors */
-	public static final Map<Class<?>, Map<String, PropertyDescriptor>> propDescCache = new HashMap<Class<?>, Map<String, PropertyDescriptor>>();
+	public static final Map<Class<?>, Map<String, PropertyDescriptor>> propDescCache = new HashMap<>();
 
 	public static ThreadLocal<NumberFormat> numberFormat = new ThreadLocal<NumberFormat>() {
+		@Override
 		protected NumberFormat initialValue() {
 			return NumberFormat.getInstance();
-		};
+		}
 	};
 
 	/**
 	 * Create a new instance of the given class name for the given constructor arguments
-	 * 
+	 *
 	 * @param className the name of the class to instantiate
 	 * @param args the constructor arguments
 	 * @throws ApplicationException if there is not matching constructor
@@ -73,7 +75,7 @@ public class ReflectionHelper {
 
 	/**
 	 * Create a new instance of the given Class for the given constructor arguments
-	 * 
+	 *
 	 * @param klass the type
 	 * @param args the constructor arguments
 	 * @throws ApplicationException if there is not matching constructor
@@ -96,7 +98,7 @@ public class ReflectionHelper {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param parameterTypes
 	 * @param args
 	 * @return true if the specified args are of the same number and type as the given parameterTypes
@@ -107,7 +109,7 @@ public class ReflectionHelper {
 		}
 		int index = 0;
 		for (Object arg : args) {
-			if (arg != null && !(parameterTypes[index++].isAssignableFrom(arg.getClass()))) {
+			if ((arg != null) && !(parameterTypes[index++].isAssignableFrom(arg.getClass()))) {
 				return false;
 			}
 
@@ -118,9 +120,8 @@ public class ReflectionHelper {
 	/**
 	 * Get the value of the specified attribute for the given object
 	 * <p>
-	 * The attribute must comply with the JavaBean convention, i.e. the public [type] get[AttributeName]() method must
-	 * exist
-	 * 
+	 * The attribute must comply with the JavaBean convention, i.e. the public [type] get[AttributeName]() method must exist
+	 *
 	 * @return the
 	 */
 	public static Object getPropertyValue(String attributeName, Object o) {
@@ -195,7 +196,7 @@ public class ReflectionHelper {
 	 * Get the value of the specified attribute for the given object using {@link Field} level reflection
 	 * <p>
 	 * No Java Bean convention required
-	 * 
+	 *
 	 * @param fieldName the name of the field. Can be a composite name, e.g. on a Leg instance: racePosition.id.posCode
 	 */
 	public static Object getFieldValue(String fieldName, Object o) {
@@ -231,7 +232,7 @@ public class ReflectionHelper {
 	 * Retrieve the {@link Field} for the specified {@link Class} and fieldName
 	 * <p>
 	 * Sets the field to {@link Field#setAccessible(boolean)} to allow getting its value by reflection
-	 * 
+	 *
 	 * @param fieldName
 	 * @param class1
 	 * @return
@@ -257,7 +258,7 @@ public class ReflectionHelper {
 	private static void cacheFields(Class<? extends Object> klass) {
 		try {
 			Class<? extends Object> tmp = klass;
-			Map<String, Field> cached = new TreeMap<String, Field>();
+			Map<String, Field> cached = new TreeMap<>();
 			Field[] fields = tmp.getDeclaredFields();
 			while (tmp.getSuperclass() != null) {
 				fields = (Field[]) ArrayUtils.addAll(fields, tmp.getSuperclass().getDeclaredFields());
@@ -327,7 +328,7 @@ public class ReflectionHelper {
 
 	/**
 	 * Set the attribute values of the given object instance
-	 * 
+	 *
 	 * @param instance the object instance
 	 * @param properties the attribute names
 	 * @param values the string representation of the attribute values
@@ -342,7 +343,7 @@ public class ReflectionHelper {
 
 	/**
 	 * Set the value of the specified attribute using Field level reflection
-	 * 
+	 *
 	 * @param obj the object containing the attribute
 	 * @param attribute the attribute name
 	 * @param value the string representation, it is converted to proper data type value
@@ -369,11 +370,11 @@ public class ReflectionHelper {
 	private static Object convert(Class<?> type, String value) {
 		if (type == String.class) {
 			return value;
-		} else if (type == Long.class || type == Long.TYPE) {
+		} else if ((type == Long.class) || (type == Long.TYPE)) {
 			return Long.valueOf(value);
-		} else if (type == Integer.class || type == Integer.TYPE) {
+		} else if ((type == Integer.class) || (type == Integer.TYPE)) {
 			return Integer.valueOf(value);
-		} else if (type == Double.class || type == Double.TYPE) {
+		} else if ((type == Double.class) || (type == Double.TYPE)) {
 			return Double.valueOf(value);
 		} else if (type == Date.class) {
 			return DateUtils.parse(value);
@@ -404,7 +405,7 @@ public class ReflectionHelper {
 	 */
 	public static List<String> getAnnotatedFields(Class<? extends Annotation> annotationClass, Class<?> klass) {
 
-		List<String> res = new ArrayList<String>();
+		List<String> res = new ArrayList<>();
 		for (Field field : klass.getDeclaredFields()) {
 			if (field.isAnnotationPresent(annotationClass)) {
 				res.add(field.getName());
@@ -427,7 +428,7 @@ public class ReflectionHelper {
 		Class<? extends Object> tooClass = too.getClass();
 		Field[] tooFields = tooClass.getDeclaredFields();
 
-		if (fromFields != null && tooFields != null) {
+		if ((fromFields != null) && (tooFields != null)) {
 			for (Field tooF : tooFields) {
 				try {
 					// Check if that fields exists in the other method
@@ -449,7 +450,7 @@ public class ReflectionHelper {
 
 	/**
 	 * Check if <code>columName</code> is mapped in given entity
-	 * 
+	 *
 	 * @param klass
 	 * @return
 	 */
@@ -460,7 +461,7 @@ public class ReflectionHelper {
 			String column = null;
 			for (Method method : methods) {
 				column = getPropertyMappedColumnName(klass, method);
-				if ((column != null && column.equalsIgnoreCase(columnName))) {
+				if (((column != null) && column.equalsIgnoreCase(columnName))) {
 					return true;
 				}
 			}

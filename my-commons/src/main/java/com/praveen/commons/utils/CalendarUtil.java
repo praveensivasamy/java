@@ -7,7 +7,7 @@ public class CalendarUtil {
 
 	/**
 	 * Gives the last day of the month from a given day
-	 * 
+	 *
 	 * @param aDate
 	 * @return last day in month as date
 	 */
@@ -17,7 +17,7 @@ public class CalendarUtil {
 
 	/**
 	 * Gives the first day of the month from a given day
-	 * 
+	 *
 	 * @param aDate
 	 * @return first day in month as date
 	 */
@@ -27,7 +27,7 @@ public class CalendarUtil {
 
 	/**
 	 * adds numberOfDays to aDate
-	 * 
+	 *
 	 * @param aDate
 	 * @param numberOfDays
 	 * @return result as a new date
@@ -38,7 +38,7 @@ public class CalendarUtil {
 
 	/**
 	 * subtracts numberOfDays from aDate
-	 * 
+	 *
 	 * @param aDate
 	 * @param numberOfDays
 	 * @return result as a new date
@@ -49,7 +49,7 @@ public class CalendarUtil {
 
 	/**
 	 * extracts the day of a month from a given date
-	 * 
+	 *
 	 * @param aDate
 	 * @return day
 	 */
@@ -59,7 +59,7 @@ public class CalendarUtil {
 
 	/**
 	 * calculate the days of the year of a given date
-	 * 
+	 *
 	 * @param aDate
 	 * @return days
 	 */
@@ -69,7 +69,7 @@ public class CalendarUtil {
 
 	/**
 	 * creates a new date 01.01.YYYY of a given date
-	 * 
+	 *
 	 * @param aDate
 	 * @return a new date
 	 */
@@ -79,7 +79,7 @@ public class CalendarUtil {
 
 	/**
 	 * creates a new date 31.12.YYYY of a given date
-	 * 
+	 *
 	 * @param aDate
 	 * @return a new date
 	 */
@@ -89,7 +89,7 @@ public class CalendarUtil {
 
 	/**
 	 * calculates the amount of days in a year of a given date
-	 * 
+	 *
 	 * @param aDate
 	 * @return 365/366
 	 */
@@ -99,7 +99,7 @@ public class CalendarUtil {
 
 	/**
 	 * extracts the year of a given date
-	 * 
+	 *
 	 * @param aDate
 	 * @return year
 	 */
@@ -109,7 +109,7 @@ public class CalendarUtil {
 
 	/**
 	 * calculates the amount of days in a year of a given date
-	 * 
+	 *
 	 * @param year
 	 * @return 365/366
 	 */
@@ -119,7 +119,7 @@ public class CalendarUtil {
 
 	/**
 	 * Tests if aDate is the last day of the month
-	 * 
+	 *
 	 * @param aDate
 	 * @return true if aDate is the last day in month
 	 */
@@ -129,7 +129,7 @@ public class CalendarUtil {
 
 	/**
 	 * calculates the days between to given dates
-	 * 
+	 *
 	 * @param aDate1
 	 * @param aDate2
 	 * @return absolute difference
@@ -140,7 +140,7 @@ public class CalendarUtil {
 
 	/**
 	 * Tests if aDate is in a leap year
-	 * 
+	 *
 	 * @param aDate
 	 * @return true if year is leap
 	 */

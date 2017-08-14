@@ -24,8 +24,7 @@ public class Validator {
 	/**
 	 * Validate {@link TrimatrixTracker} template
 	 *
-	 * @param row
-	 *            excelseet {@link Row}
+	 * @param row excelseet {@link Row}
 	 * @return yes|no
 	 */
 	public static boolean validateTrimatrixTemplate(Row row) {
@@ -49,8 +48,7 @@ public class Validator {
 	/**
 	 * Validate {@link CollectionTracker} template
 	 *
-	 * @param row
-	 *            excelsheet {@link Row}
+	 * @param row excelsheet {@link Row}
 	 * @return yes|no
 	 */
 	public static boolean validateCollectionTemplate(Row row) {

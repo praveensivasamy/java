@@ -36,70 +36,70 @@ public class CollectionReportUploader extends AbstractTemplateUploader<Collectio
 				CollectionColumn column = CollectionColumn.from(cell.getColumnIndex());
 
 				switch (column)
-				{
-					case CUSTOMER_NAME:
-						record.setCustomerName(cell.getStringCellValue());
-						break;
-					case RECEIPT_NUMBER:
-						if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-							record.setReceiptNumber((long) cell.getNumericCellValue());
-						} else {
-							record.setReceiptNumber(new BigInteger(cell.getStringCellValue()).longValue());
-						}
-						break;
-					case RECEIPT_DATE:
-						record.setReceiptDate(cell.getDateCellValue());
-						break;
-					case RECEIPT_CURRENCY:
-						record.setCurrency(BilledCurrency.EUR);
-						break;
-					case ALLOCATED_AMOUNT:
-						record.setAllocatedAmount(cell.getNumericCellValue());
-						break;
-					case RECEIVED_AMOUNT:
-						record.setReceivedAmount(cell.getNumericCellValue());
-						break;
-					case DATE_APPLED:
-						record.setDateApplied(cell.getDateCellValue());
-						break;
-					case INVOICE_NUMBER:
-						if (StringUtils.isBlank(cell.getStringCellValue())) {
-							record.setInvoiceNumber(null);
-							break loop;
-						}
-						record.setInvoiceNumber(cell.getStringCellValue());
-						break;
-					case INVOICE_DATE:
-						record.setInvoiceDate(cell.getDateCellValue());
-						break;
-					case WON:
-						if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-							record.setWon((int) cell.getNumericCellValue());
-						} else {
-							record.setWon(0);
-						}
-						break;
-					case INVOICE_CURRENCY:
-						record.setInvoiceCurrency(BilledCurrency.EUR);
-						break;
-					case APPLIED_INVOICE_AMOUNT:
-						record.setAdjustedInvoiceAmount(cell.getNumericCellValue());
-						break;
-					case APPLIED_RECEIPT_AMOUNT:
-						record.setAllocatedReceiptAmount(cell.getNumericCellValue());
-						break;
-					case UNAPPLIED_RECEIPT_AMOUNT:
-						record.setUnappliedReceiptAMount(cell.getNumericCellValue());
-						break;
-					case COMMENTS:
-						record.setComments(cell.getStringCellValue());
-						break;
-					case CONTRACT_ID:
-						record.setContractId(cell.getStringCellValue());
-						break;
-					default:
-						break;
-				}
+					{
+						case CUSTOMER_NAME:
+							record.setCustomerName(cell.getStringCellValue());
+							break;
+						case RECEIPT_NUMBER:
+							if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+								record.setReceiptNumber((long) cell.getNumericCellValue());
+							} else {
+								record.setReceiptNumber(new BigInteger(cell.getStringCellValue()).longValue());
+							}
+							break;
+						case RECEIPT_DATE:
+							record.setReceiptDate(cell.getDateCellValue());
+							break;
+						case RECEIPT_CURRENCY:
+							record.setCurrency(BilledCurrency.EUR);
+							break;
+						case ALLOCATED_AMOUNT:
+							record.setAllocatedAmount(cell.getNumericCellValue());
+							break;
+						case RECEIVED_AMOUNT:
+							record.setReceivedAmount(cell.getNumericCellValue());
+							break;
+						case DATE_APPLED:
+							record.setDateApplied(cell.getDateCellValue());
+							break;
+						case INVOICE_NUMBER:
+							if (StringUtils.isBlank(cell.getStringCellValue())) {
+								record.setInvoiceNumber(null);
+								break loop;
+							}
+							record.setInvoiceNumber(cell.getStringCellValue());
+							break;
+						case INVOICE_DATE:
+							record.setInvoiceDate(cell.getDateCellValue());
+							break;
+						case WON:
+							if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
+								record.setWon((int) cell.getNumericCellValue());
+							} else {
+								record.setWon(0);
+							}
+							break;
+						case INVOICE_CURRENCY:
+							record.setInvoiceCurrency(BilledCurrency.EUR);
+							break;
+						case APPLIED_INVOICE_AMOUNT:
+							record.setAdjustedInvoiceAmount(cell.getNumericCellValue());
+							break;
+						case APPLIED_RECEIPT_AMOUNT:
+							record.setAllocatedReceiptAmount(cell.getNumericCellValue());
+							break;
+						case UNAPPLIED_RECEIPT_AMOUNT:
+							record.setUnappliedReceiptAMount(cell.getNumericCellValue());
+							break;
+						case COMMENTS:
+							record.setComments(cell.getStringCellValue());
+							break;
+						case CONTRACT_ID:
+							record.setContractId(cell.getStringCellValue());
+							break;
+						default:
+							break;
+					}
 			}
 		}
 		return record;

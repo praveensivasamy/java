@@ -31,8 +31,8 @@ public class ToStringUtils {
 	 * Standard toString utility method
 	 *
 	 * @param o the object
-	 * @param attributeNames the list of attribute names to be part of the output. If the attribute name ends with
-	 *            'newLine', the attribute will be displayed on a new line
+	 * @param attributeNames the list of attribute names to be part of the output. If the attribute name ends with 'newLine', the attribute will be
+	 * displayed on a new line
 	 * @return SimpleClassName[attribute_1:value_1]...[attribute_n:value_n]
 	 */
 	public static String asString(Object o, String... attributeNames) {
@@ -171,8 +171,7 @@ public class ToStringUtils {
 	}
 
 	/**
-	 * Replace the placeholder (which is enclosed in curly brackets) with the given value, optionally quoted with the
-	 * single quote character
+	 * Replace the placeholder (which is enclosed in curly brackets) with the given value, optionally quoted with the single quote character
 	 * <p>
 	 * Example "where userName = {user_name}" to "where userName = abc"
 	 *
@@ -290,7 +289,6 @@ public class ToStringUtils {
 		}
 		List<String> column = ReflectionHelper.getAnnotatedFields(Column.class, o.getClass());
 		column.sort((o1, o2) -> o1.compareTo(o2));
-		;
 		return res.toString();
 	}
 

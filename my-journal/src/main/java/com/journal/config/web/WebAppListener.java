@@ -15,31 +15,33 @@ import ch.qos.logback.classic.LoggerContext;
 @WebListener
 public class WebAppListener implements ServletContextListener {
 
-    /**
-     * Default constructor.
-     */
-    public WebAppListener() {
-
-    }
-
-    /**
-     * @see ServletContextListener#contextDestroyed(ServletContextEvent)
-     */
-    public void contextDestroyed(ServletContextEvent contextDestroyEvent) {
 	/**
-	 * Removing the logger instance
+	 * Default constructor.
 	 */
-	if (LoggerFactory.getILoggerFactory() instanceof LoggerContext) {
-	    ((LoggerContext) LoggerFactory.getILoggerFactory()).stop();
+	public WebAppListener() {
+
 	}
 
-    }
+	/**
+	 * @see ServletContextListener#contextDestroyed(ServletContextEvent)
+	 */
+	@Override
+	public void contextDestroyed(ServletContextEvent contextDestroyEvent) {
+		/**
+		 * Removing the logger instance
+		 */
+		if (LoggerFactory.getILoggerFactory() instanceof LoggerContext) {
+			((LoggerContext) LoggerFactory.getILoggerFactory()).stop();
+		}
 
-    /**
-     * @see ServletContextListener#contextInitialized(ServletContextEvent)
-     */
-    public void contextInitialized(ServletContextEvent contextInitEvent) {
-	System.out.println(this.getClass().getSimpleName() + " Initialized ...");
-    }
+	}
+
+	/**
+	 * @see ServletContextListener#contextInitialized(ServletContextEvent)
+	 */
+	@Override
+	public void contextInitialized(ServletContextEvent contextInitEvent) {
+		System.out.println(this.getClass().getSimpleName() + " Initialized ...");
+	}
 
 }

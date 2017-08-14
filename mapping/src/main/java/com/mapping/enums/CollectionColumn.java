@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.mapping.enums;
 
@@ -53,7 +53,7 @@ public enum CollectionColumn {
 		this.columnIndex = columnIndex;
 	}
 
-	private static final Map<Integer, CollectionColumn> _map = new HashMap<Integer, CollectionColumn>();
+	private static final Map<Integer, CollectionColumn> _map = new HashMap<>();
 
 	static {
 		for (CollectionColumn column : CollectionColumn.values()) {
