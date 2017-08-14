@@ -35,7 +35,7 @@ public class ColumnAliasMapping {
 
 	@Override
 	public String toString() {
-		return aliasName + "=" + ToStringUtils.output(columnType);
+		return aliasName + "=" + ToStringUtils.objectToString(columnType);
 	}
 
 }

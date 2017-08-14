@@ -27,7 +27,7 @@ public class QueryParameter {
 
 	@Override
 	public String toString() {
-		return name + "=" + ToStringUtils.output(value);
+		return name + "=" + ToStringUtils.objectToString(value);
 	}
 
 }

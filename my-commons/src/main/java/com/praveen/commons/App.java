@@ -18,7 +18,7 @@ public class App {
 		JpaDao dao = JpaDao.instance(sourceProvider);
 		try {
 			System.out.println(dao.toString());
-			List l = dao.query("from TUser ");
+			@SuppressWarnings("rawtypes") List l = dao.query("from TUser ");
 			System.out.println(l);
 
 		} finally {

@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.persistence.Column;
+import javax.persistence.Entity;
 
 import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
@@ -17,14 +17,20 @@ import org.joda.time.DateTime;
 import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
 
+/**
+ * String utilities and convinence methods which alwasy retruns String
+ * 
+ * @author Praveen Sivasamy
+ *
+ */
 public class ToStringUtils {
 
-	public static final String CSV_SEP = ",";
+	protected static final String CSV_SEP = ",";
 
 	private static NumberFormat format = NumberFormat.getInstance(Locale.getDefault());
 
 	static {
-		format.setMaximumFractionDigits(15);
+		format.setMaximumFractionDigits(10);
 	}
 
 	/**
@@ -43,12 +49,18 @@ public class ToStringUtils {
 				attributeName = attributeName.replace("\n", "");
 				res.append("\n");
 			}
-			res.append("[").append(attributeName).append(":").append(output(ReflectionHelper.getFieldValue(attributeName, o))).append("]");
+			res.append("[").append(attributeName).append(":").append(objectToString(ReflectionHelper.getFieldValue(attributeName, o))).append("]");
 		}
 		return res.toString();
 	}
 
-	public static String asCommaSeparated(Collection<?> coll) {
+	/**
+	 * convert {@link Collection} as comma seperated {@link String}
+	 * 
+	 * @param coll
+	 * @return {@link String}
+	 */
+	public static String collectionToCSV(Collection<?> coll) {
 		StringBuilder sb = new StringBuilder("(");
 		for (Object o : coll) {
 			sb.append(o).append(",");
@@ -56,7 +68,13 @@ public class ToStringUtils {
 		return StringUtils.removeEnd(sb.toString(), ",") + ")";
 	}
 
-	public static List<String> asList(String commaSeparatedString) {
+	/**
+	 * convert comme seperated string to {@link List}
+	 * 
+	 * @param commaSeparatedString
+	 * @return {@link List}
+	 */
+	public static List<String> csvToList(String commaSeparatedString) {
 		if ((commaSeparatedString == null) || commaSeparatedString.isEmpty()) {
 			return new ArrayList<>();
 		}
@@ -64,22 +82,54 @@ public class ToStringUtils {
 	}
 
 	/**
-	 * This method converts the comma seperated strings to the in clause for SQL in clause
-	 *
-	 * @param elements
+	 * Converts a bean to delimited string default delimiter is comma
+	 * 
+	 * @param delimiter
+	 * @param o
+	 * @param attributeNames
 	 * @return
 	 */
-	public static String encloseSQLQuotes(List<String> elements) {
-		String tmpStr = "";
-		for (String element : elements) {
-			tmpStr += '\'' + element + '\'' + ',';
+	public static String asDelimitedString(String delimiter, Object o, String... attributeNames) {
+		StringBuilder res = new StringBuilder();
+		delimiter = delimiter == null ? "," : delimiter;
+		for (int i = 0; i < attributeNames.length; i++) {
+			String s = formatObjectToString(ReflectionHelper.getFieldValue(attributeNames[i], o), Locale.getDefault());
+			res.append(s.replace("\n", ":"));
+			if (i < (attributeNames.length - 1)) {
+				res.append(delimiter);
+			}
 		}
-		tmpStr = tmpStr.lastIndexOf(',') > 0 ? '(' + tmpStr.substring(0, tmpStr.lastIndexOf(',')) + ')' : tmpStr;
-		return tmpStr;
-
+		return res.toString();
 	}
 
-	public static String output(Object o) {
+	/**
+	 * converts {@link Entity} colums to CSV string
+	 * 
+	 * @param delimiter
+	 * @param entity
+	 * @param attributeNames
+	 * @return
+	 */
+	public static String columnsAsCsv(String delimiter, Object entity, String... attributeNames) {
+		delimiter = delimiter == null ? "," : delimiter;
+		StringBuilder res = new StringBuilder();
+		String[] columns = ReflectionHelper.getColumnsNames(entity.getClass(), attributeNames);
+		for (int i = 0; i < columns.length; i++) {
+			res.append("\"" + columns[i] + "\"");
+			if (i < (attributeNames.length - 1)) {
+				res.append(delimiter);
+			}
+		}
+		return res.toString();
+	}
+
+	/**
+	 * convert {@link Object} to {@link String} formatted
+	 * 
+	 * @param o
+	 * @return
+	 */
+	public static String objectToString(Object o) {
 		if (o == null) {
 			return "null";
 		}
@@ -94,7 +144,7 @@ public class ToStringUtils {
 		}
 		if (o instanceof Collection<?>) {
 			Collection<?> col = (Collection<?>) o;
-			return asCommaSeparated(col);
+			return collectionToCSV(col);
 		}
 
 		if (o instanceof Double) {
@@ -113,13 +163,13 @@ public class ToStringUtils {
 	}
 
 	/**
-	 * Convert given object to formatted string
+	 * Object to formatted string based on {@link Locale}
 	 *
 	 * @param o
 	 * @param locale
 	 * @return
 	 */
-	private static String output(Object o, Locale locale) {
+	private static String formatObjectToString(Object o, Locale locale) {
 		if (o == null) {
 			return "null";
 		}
@@ -133,41 +183,6 @@ public class ToStringUtils {
 			return format.format(o);
 		}
 		return o.toString();
-	}
-
-	/**
-	 * Split the given string with ',' as separator
-	 * <p>
-	 * Ignore any substring enclosed inside / * and * /
-	 *
-	 * @return
-	 */
-	public static String[] split(String s) {
-		if (s == null) {
-			return new String[0];
-		} else {
-			return removeComments(s).split(",");
-		}
-	}
-
-	/**
-	 * Remove any substring enclosed inside / * and * / from the original string
-	 * <p>
-	 * User in {link RaceConfiguration#getWriters()} and the like
-	 */
-	private static String removeComments(String s) {
-		StringBuilder res = new StringBuilder();
-		boolean inComment = false;
-		char[] chars = s.toCharArray();
-		for (char c : chars) {
-			if (c == '/') {
-				inComment = !inComment;
-			}
-			if (!inComment && (c != '*') && (c != '/')) {
-				res.append(c);
-			}
-		}
-		return res.toString();
 	}
 
 	/**
@@ -193,20 +208,6 @@ public class ToStringUtils {
 	public static String replacePlaceholder(String text, String placeholder, Object value) {
 		String replacement = asString(value);
 		return text.replace("{" + placeholder + "}", replacement);
-	}
-
-	private static String asString(Object value) {
-		if (value == null) {
-			return "null";
-		}
-		if (value instanceof Date) {
-			return DateUtils.format((Date) value);
-		}
-		return value.toString();
-	}
-
-	public static String quote(String s) {
-		return "'" + s + "'";
 	}
 
 	/**
@@ -254,7 +255,7 @@ public class ToStringUtils {
 		String[] tokens = connString.split("\\|");
 		if (tokens.length != 4) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
-					.details("Invalid format for " + connString + " Expected format: url|user|password|schema");
+			.details("Invalid format for " + connString + " Expected format: url|user|password|schema");
 		}
 		return tokens[i];
 	}
@@ -264,97 +265,20 @@ public class ToStringUtils {
 		return url.substring(url.lastIndexOf(':') + 1);
 	}
 
-	public static String asCsvString(String delimiter, Object o, String... attributeNames) {
-		StringBuilder res = new StringBuilder();
-		delimiter = delimiter == null ? "," : delimiter;
-		for (int i = 0; i < attributeNames.length; i++) {
-			String s = output(ReflectionHelper.getFieldValue(attributeNames[i], o));
-			res.append(s.replace("\n", ":"));
-			if (i < (attributeNames.length - 1)) {
-				res.append(delimiter);
-			}
-		}
-		return res.toString();
-	}
-
 	/**
+	 * convert comma seperated strings to the 'in' clause for SQL in clause
 	 *
-	 */
-	public static String asCsvString(String delimiter, Object o) {
-		StringBuilder res = new StringBuilder();
-		delimiter = delimiter == null ? "," : delimiter;
-
-		if (ReflectionHelper.getTableName(o.getClass()) == null) {
-			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Object not entity");
-		}
-		List<String> column = ReflectionHelper.getAnnotatedFields(Column.class, o.getClass());
-		column.sort((o1, o2) -> o1.compareTo(o2));
-		return res.toString();
-	}
-
-	/**
-	 * Converts the given bean to CSV and formats numbers based on locale
-	 *
-	 * @param delimiter
-	 * @param o
-	 * @param attributeNames
+	 * @param elements
 	 * @return
 	 */
-	public static String asCSV(String delimiter, Object o, String... attributeNames) {
-		StringBuilder res = new StringBuilder();
-		delimiter = delimiter == null ? "," : delimiter;
-		for (int i = 0; i < attributeNames.length; i++) {
-			String s = output(ReflectionHelper.getFieldValue(attributeNames[i], o), Locale.getDefault());
-			res.append(s.replace("\n", ":"));
-			if (i < (attributeNames.length - 1)) {
-				res.append(delimiter);
-			}
+	public static String encloseSQLQuotes(List<String> elements) {
+		String tmpStr = "";
+		for (String element : elements) {
+			tmpStr += '\'' + element + '\'' + ',';
 		}
-		return res.toString();
+		tmpStr = tmpStr.lastIndexOf(',') > 0 ? '(' + tmpStr.substring(0, tmpStr.lastIndexOf(',')) + ')' : tmpStr;
+		return tmpStr;
+
 	}
 
-	public static String asCsvHeader(Object o, String... attributeNames) {
-		StringBuilder res = new StringBuilder();
-		for (int i = 0; i < attributeNames.length; i++) {
-			res.append(attributeNames[i]);
-			if (i < (attributeNames.length - 1)) {
-				res.append(",");
-			}
-		}
-		return res.toString();
-	}
-
-	public static String asCsvHeaderColumns(String delimiter, Object o, String... attributeNames) {
-		delimiter = delimiter == null ? "," : delimiter;
-		StringBuilder res = new StringBuilder();
-		String[] columns = ReflectionHelper.getColumnsNames(o.getClass(), attributeNames);
-		for (int i = 0; i < columns.length; i++) {
-			res.append("\"" + columns[i] + "\"");
-			if (i < (attributeNames.length - 1)) {
-				res.append(delimiter);
-			}
-		}
-		return res.toString();
-	}
-
-	public static int nthOccurrence(String str, char c, int n) {
-		int pos = str.indexOf(c, 0);
-		while ((--n > 0) && (pos != -1)) {
-			pos = str.indexOf(c, pos + 1);
-		}
-		return pos;
-	}
-
-	public static String getThreadStackTrace() {
-		StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-		StringBuilder sb = new StringBuilder(Thread.currentThread().getName() + ":\n");
-		for (int i = 1; i < stackTrace.length; i++) {
-			StackTraceElement ste = stackTrace[i];
-			if (!ste.getClassName().contains("clip")) {
-				continue;
-			}
-			sb.append(ste.getClassName() + ":" + ste.getMethodName() + ":" + ste.getLineNumber()).append("\n");
-		}
-		return sb.toString();
-	}
 }
