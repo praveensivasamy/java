@@ -128,7 +128,7 @@ public class HibernateProvider {
 		return getSessionFactory().openSession();
 	}
 
-	public Interceptor getInterceptor() {
+	protected Interceptor getInterceptor() {
 		return interceptor;
 	}
 
@@ -137,22 +137,6 @@ public class HibernateProvider {
 	 */
 	public StatelessSession getStatlessSession() {
 		return getSessionFactory().openStatelessSession();
-	}
-
-	/**
-	 * Close Hibernate {@link SessionFactory}
-	 * <p>
-	 * Make sure this method is called always (use a finally block) - otherwise the application will not terminate
-	 */
-	public void tearDown() {
-		log.info("Closing SessionFactory");
-		getSessionFactory().close();
-		for (String key : instances.keySet()) {
-			if (instances.get(key) == this) {
-				instances.remove(key);
-				break;
-			}
-		}
 	}
 
 	/**

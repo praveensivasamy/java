@@ -18,7 +18,7 @@ import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
 
 /**
- * String utilities and convinence methods which alwasy retruns String
+ * String utilities and convinence methods which always returns String
  * 
  * @author Praveen Sivasamy
  *
@@ -255,7 +255,7 @@ public class ToStringUtils {
 		String[] tokens = connString.split("\\|");
 		if (tokens.length != 4) {
 			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
-			.details("Invalid format for " + connString + " Expected format: url|user|password|schema");
+					.details("Invalid format for " + connString + " Expected format: url|user|password|schema");
 		}
 		return tokens[i];
 	}
