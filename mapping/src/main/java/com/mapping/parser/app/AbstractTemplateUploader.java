@@ -147,6 +147,7 @@ public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> 
 		initialiseHibernate();
 		log.debug("Checking {}.class", persistentClass.getSimpleName());
 		Long count = dao.getCountByCriteria(persistentClass, "uploadedFile", templateFile.getName());
+
 		tearDown();
 		return count > 0;
 	}

@@ -72,4 +72,11 @@ public class Validator {
 				row.getCell(22, Row.CREATE_NULL_AS_BLANK).getStringCellValue().contains("WON No");
 	}
 
+	public static boolean validatePostingTracker(Row row) {
+		if (log.isDebugEnabled()) {
+			log.debug("00 - {}", row.getCell(0, Row.CREATE_NULL_AS_BLANK).getStringCellValue());
+		}
+		return row.getCell(0, Row.CREATE_NULL_AS_BLANK).getStringCellValue().contains("SOB ID");
+	}
+
 }

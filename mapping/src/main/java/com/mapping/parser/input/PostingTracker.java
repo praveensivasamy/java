@@ -6,32 +6,64 @@ package com.mapping.parser.input;
 import java.io.Serializable;
 import java.util.Date;
 
-import com.mapping.enums.Status;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Table;
 
+import com.mapping.enums.Status;
+import com.praveen.commons.utils.ToStringUtils;
+
+@Entity
+@Table(name = "")
 public class PostingTracker extends AbstractMappingEntity implements Serializable {
 
 	private static final long serialVersionUID = 1L;
+	@Column(name = "")
 	private String projectName;
-	private String lebIdentifier;
+	@Column(name = "")
+	private String LEBIdentifier;
+	@Id
+	@Column(name = "")
 	private String ultimatixInvoice;
+	@Id
+	@Column(name = "")
 	private String manualInvoice;
+	@Column(name = "")
 	private Date invoiceDate;
+	@Column(name = "")
 	private String invoiceDescription;
+	@Column(name = "")
 	private int invoiceAmountTaxed;
+	@Column(name = "")
 	private int invoiceAmount;
+	@Column(name = "")
 	private Date postingDate;
+	@Column(name = "")
 	private Status paymentStatus;
+	@Column(name = "")
 	private Date paymentDate;
+	@Column(name = "")
 	private String paymentAmount;
+	@Column(name = "")
 	private String receiptNumber;
+	@Column(name = "")
 	private Status closureStatus;
+	@Column(name = "")
 	private Date closedDate;
+	@Column(name = "")
 	private Status reportedB2C;
+	@Column(name = "")
 	private Status reportTracked;
 
 	@Override
 	public boolean isSave() {
 		return ultimatixInvoice != null;
+	}
+
+	@Override
+	public String toString() {
+		return ToStringUtils.asString(this, "ultimatixInvoice", "manualInvoice");
 	}
 
 	public String getProjectName() {
@@ -42,12 +74,12 @@ public class PostingTracker extends AbstractMappingEntity implements Serializabl
 		this.projectName = projectName;
 	}
 
-	public String getLebIdentifier() {
-		return lebIdentifier;
+	public String getLEBIdentifier() {
+		return LEBIdentifier;
 	}
 
-	public void setLebIdentifier(String lebIdentifier) {
-		this.lebIdentifier = lebIdentifier;
+	public void setLEBIdentifier(String lEBIdentifier) {
+		LEBIdentifier = lEBIdentifier;
 	}
 
 	public String getUltimatixInvoice() {
