@@ -1,18 +1,12 @@
 package com.praveen.commons.enums;
 
-public enum AppExceptionIdentifier {
+import com.praveen.commons.exception.ExceptionIdentifier;
+
+public enum AppExceptionIdentifier implements ExceptionIdentifier {
 	// -------------------------------------------------------------------
 
 	/** Any exception which is totally not relevant to the business */
-	TECHNICAL_EXCEPTION(9901, "Unhandled technical exception.{details}"),
-	/** */
-	MIN_NULL_DAY1(000, "getMin(day1, day2) - day1 is null"),
-	/** */
-	MIN_NULL_DAY2(000, "getMin(day1, day2) - day2 is null"),
-	/** "getMax(day1, day2) - day1 is null" */
-	MAX_NULL_DAY1(000, "getMax(day1, day2) - day1 is null"),
-	/** "getMax(day1, day2) - day2 is null" */
-	MAX_NULL_DAY2(000, "getMax(day1, day2) - day2 is null");
+	TECHNICAL_EXCEPTION(9901, "Unhandled technical exception.{details}");
 
 	// -------------------------------------------------------------------
 
@@ -30,6 +24,17 @@ public enum AppExceptionIdentifier {
 	private AppExceptionIdentifier(int code, String message) {
 		this.code = code;
 		this.message = message;
+	}
+
+	@Override
+	public int errorcode() {
+		return code;
+	}
+
+	@Override
+	public String errorMessage() {
+		return message;
+
 	}
 
 }

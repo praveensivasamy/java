@@ -1,6 +1,5 @@
 package com.praveen.commons.exception;
 
-import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.utils.ToStringUtils;
 
 /**
@@ -19,24 +18,24 @@ public class ApplicationException extends RuntimeException {
 	protected String errorMessage;
 	protected String step;
 	protected Integer errorCode;
-	protected AppExceptionIdentifier identifier;// Types of errors
+	protected ExceptionIdentifier identifier;// Types of errors
 
-	public static ApplicationException instance(AppExceptionIdentifier identifier) {
+	public static ApplicationException instance(ExceptionIdentifier identifier) {
 		return new ApplicationException(identifier);
 	}
 
 	/**
-	 * Write the exception received as is with {@link AppExceptionIdentifier} code
+	 * Write the exception received as is with {@link ExceptionIdentifier} code
 	 *
 	 * @param identifier
 	 * @param cause
 	 * @return
 	 */
-	public static ApplicationException instance(AppExceptionIdentifier identifier, Exception cause) {
+	public static ApplicationException instance(ExceptionIdentifier identifier, Exception cause) {
 		ApplicationException res = new ApplicationException(cause);
 		res.identifier = identifier;
-		res.errorCode = identifier.code();
-		res.errorMessage = identifier.message();
+		res.errorCode = identifier.errorcode();
+		res.errorMessage = identifier.errorMessage();
 		return res;
 	}
 
@@ -80,10 +79,10 @@ public class ApplicationException extends RuntimeException {
 	 *
 	 * @param identifier
 	 */
-	protected ApplicationException(AppExceptionIdentifier identifier) {
+	protected ApplicationException(ExceptionIdentifier identifier) {
 		this.identifier = identifier;
-		this.errorCode = identifier.code();
-		this.errorMessage = identifier.message();
+		this.errorCode = identifier.errorcode();
+		this.errorMessage = identifier.errorMessage();
 	}
 
 	/**
@@ -98,7 +97,7 @@ public class ApplicationException extends RuntimeException {
 	}
 
 	/**
-	 * Add some details to the message place holder in the {@link AppExceptionIdentifier}
+	 * Add some details to the message place holder in the {@link ExceptionIdentifier}
 	 *
 	 * @param value
 	 * @return
@@ -153,7 +152,7 @@ public class ApplicationException extends RuntimeException {
 		return root;
 	}
 
-	public AppExceptionIdentifier getIdentifier() {
+	public ExceptionIdentifier getIdentifier() {
 		return identifier;
 	}
 
