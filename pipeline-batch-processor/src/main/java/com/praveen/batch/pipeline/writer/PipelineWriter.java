@@ -6,7 +6,7 @@ public class PipelineWriter extends PipeLineElement {
 
 	@Override
 	public void process() {
-		
+
 	}
 
 }
