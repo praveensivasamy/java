@@ -32,6 +32,7 @@ public class App {
 
 	private void initialise() {
 		log.info("Initialise");
+		AppConfiguration config = AppConfiguration.create();
 	}
 
 	private void process() {

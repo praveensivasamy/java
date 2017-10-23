@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<batch-config>
+	<workflow name="" description="">
+		<readers>
+			<reader name="" class=""></reader>
+		</readers>
+		<processors>
+			<processor name="" class=""></processor>
+		</processors>
+		<writers>
+			<writer name="" class=""></writer>
+		</writers>
+	</workflow>
+
+</batch-config>
