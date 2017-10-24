@@ -37,20 +37,21 @@ public class AppConfiguration {
 		setUpThreadSize();
 	}
 
-	private static void setUpThreadSize() {
+	private void setUpThreadSize() {
 		log.info("Setup Thread size");
+		long totalRecords = 0;
 	}
 
-	protected List<PipelineReader> getPipelineReaders() {
+	public List<PipelineReader> getPipelineReaders() {
 		return Arrays.asList(new PipelineReader());
 	}
 
-	protected List<PipelineProcessor> getPipelineProcessors() {
+	public List<PipelineProcessor> getPipelineProcessors() {
 		return Arrays.asList(new PipelineProcessor());
 
 	}
 
-	protected List<PipelineWriter> getPipelineWriters() {
+	public List<PipelineWriter> getPipelineWriters() {
 		return Arrays.asList(new PipelineWriter());
 
 	}

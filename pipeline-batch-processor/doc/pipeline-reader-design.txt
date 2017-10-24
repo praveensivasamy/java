@@ -1,0 +1,15 @@
+1. The pipelines execute select resultset based on the range
+
+To determine the range :
+==========================
+1. Select the total records from the table
+2. Distribute the results to the number of determined threads
+3. Derive the min and max range for each pipeline reader as follows:
+ -let first result is the start of the range and maxresult is the end of the first range.
+ -Determine the number of range for each thread
+   Ex : let the count = 1000 and number of threads = 2. Then range for first thread is:
+    thread-1 : minrange = 1 - maxrange= 500
+    thread-2 : minrange = 501 - maxrange= 1000
+   
+   thread-1 : select * from table where rowid >=1   and rowid <=500
+   thread-2 : select * from table where rowid >=501 and rowid <=1000
