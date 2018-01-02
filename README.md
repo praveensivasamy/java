@@ -1,5 +1,6 @@
-# java
-My personal projects
+# Project : pipeline-batch-processor
+A java framework for ETL. 
+
 
 
 Features to be supported:
