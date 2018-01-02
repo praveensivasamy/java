@@ -1,6 +1,6 @@
 # Project : pipeline-batch-processor
 A java and hibernate framework for ETL. 
-##Main components:
+## Main components:
 1.Readers - Read data from the source 
 2.Processors - Transform the data.
            |_enrichers - modify the transformed data
