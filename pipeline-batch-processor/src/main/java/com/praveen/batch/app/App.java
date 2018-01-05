@@ -35,9 +35,7 @@ public class App {
 
 	private void process() {
 		log.info("Process");
-
 		AppConfiguration config = AppConfiguration.getConfiguration();
-
 		PipelineExecutor executor = new PipelineExecutor(config);
 		executor.execute();
 	}

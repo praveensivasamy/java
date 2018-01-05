@@ -1,12 +1,11 @@
 package com.praveen.batch.pipeline.process;
 
-import com.praveen.batch.pipeline.PipeLineElement;
-
-public class PipelineProcessor extends PipeLineElement {
+public class PipelineProcessor extends Processor {
 
 	@Override
 	public void process() {
-
+		// TODO Auto-generated method stub
+		
 	}
 
 }

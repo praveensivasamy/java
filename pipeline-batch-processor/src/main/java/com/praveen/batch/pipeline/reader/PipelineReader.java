@@ -1,11 +1,10 @@
 package com.praveen.batch.pipeline.reader;
 
-import com.praveen.batch.pipeline.PipeLineElement;
-
-public class PipelineReader extends PipeLineElement {
+public class PipelineReader extends Reader {
 
 	@Override
 	public void process() {
+		// TODO Auto-generated method stub
 
 	}
 

@@ -4,23 +4,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.praveen.batch.config.AppConfiguration;
-import com.praveen.batch.pipeline.process.PipelineProcessor;
-import com.praveen.batch.pipeline.reader.PipelineReader;
-import com.praveen.batch.pipeline.writer.PipelineWriter;
+import com.praveen.batch.pipeline.process.Processor;
+import com.praveen.batch.pipeline.reader.Reader;
+import com.praveen.batch.pipeline.writer.Writer;
 
 public class Pipeline {
 
 	private static ThreadLocal<Pipeline> instances = new ThreadLocal<>();
 
-	private List<PipelineReader> readers = new ArrayList<>();
-	private List<PipelineProcessor> processors = new ArrayList<>();
-	private List<PipelineWriter> writers = new ArrayList<>();
+	private List<Reader> readers = new ArrayList<>();
+	private List<Processor> processors = new ArrayList<>();
+	private List<Writer> writers = new ArrayList<>();
 
 	public static Pipeline create(AppConfiguration appConfig) {
 		return new Pipeline(appConfig.getPipelineReaders(), appConfig.getPipelineProcessors(), appConfig.getPipelineWriters());
 	}
 
-	public Pipeline(List<PipelineReader> readers, List<PipelineProcessor> processors, List<PipelineWriter> writers) {
+	public Pipeline(List<Reader> readers, List<Processor> processors, List<Writer> writers) {
 		this.readers = readers;
 		this.processors = processors;
 		this.writers = writers;

@@ -7,8 +7,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.praveen.batch.pipeline.process.PipelineProcessor;
+import com.praveen.batch.pipeline.process.Processor;
 import com.praveen.batch.pipeline.reader.PipelineReader;
+import com.praveen.batch.pipeline.reader.Reader;
 import com.praveen.batch.pipeline.writer.PipelineWriter;
+import com.praveen.batch.pipeline.writer.Writer;
 
 public class AppConfiguration {
 	private static final Logger log = LoggerFactory.getLogger(AppConfiguration.class);
@@ -42,16 +45,16 @@ public class AppConfiguration {
 		long totalRecords = 0;
 	}
 
-	public List<PipelineReader> getPipelineReaders() {
+	public List<Reader> getPipelineReaders() {
 		return Arrays.asList(new PipelineReader());
 	}
 
-	public List<PipelineProcessor> getPipelineProcessors() {
+	public List<Processor> getPipelineProcessors() {
 		return Arrays.asList(new PipelineProcessor());
 
 	}
 
-	public List<PipelineWriter> getPipelineWriters() {
+	public List<Writer> getPipelineWriters() {
 		return Arrays.asList(new PipelineWriter());
 
 	}

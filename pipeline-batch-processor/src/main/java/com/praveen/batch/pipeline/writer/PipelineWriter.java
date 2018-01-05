@@ -1,8 +1,6 @@
 package com.praveen.batch.pipeline.writer;
 
-import com.praveen.batch.pipeline.PipeLineElement;
-
-public class PipelineWriter extends PipeLineElement {
+public class PipelineWriter extends Writer {
 
 	@Override
 	public void process() {
