@@ -27,7 +27,6 @@ public class PipelineExecutor {
 
 		Pipeline pipeline = Pipeline.create(appConfig);
 		pipeline.initialise();
-		pipeline.process();
 
 	}
 

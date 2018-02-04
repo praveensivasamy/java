@@ -1,11 +1,12 @@
 package com.praveen.batch.pipeline.process;
 
+import com.praveen.batch.pipeline.conatiner.DataContainer;
+
 public class PipelineProcessor extends Processor {
 
 	@Override
-	public void process() {
-		// TODO Auto-generated method stub
-		
+	public DataContainer process(DataContainer container) {
+		return null;
 	}
 
 }

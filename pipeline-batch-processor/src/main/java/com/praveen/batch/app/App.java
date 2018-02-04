@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 
 import com.praveen.batch.config.AppConfiguration;
 import com.praveen.batch.pipeline.PipelineExecutor;
+import com.praveen.batch.report.AppStatistics;
 
 /**
  * Base Application Invoker
@@ -23,9 +24,12 @@ public class App {
 
 	public void run(String... args) {
 		log.info("App run");
+		AppStatistics.applicationStarted();
 		initialise();
 		process();
 		tearDown();
+		AppStatistics.applicationFinished();
+		AppStatistics.printStatistics();
 	}
 
 	private void initialise() {
