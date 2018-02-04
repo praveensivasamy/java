@@ -15,7 +15,7 @@
 			<pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} %-5p &lt;%t&gt; [%20c] [%M] [%2L] - %msg%n </pattern>
 		</encoder>
 	</appender>
-	<logger name="com.pipelinebatch" level="INFO" additivity="false">
+	<logger name="com.praveen.batch" level="INFO" additivity="false">
 		<appender-ref ref="STDOUT" />
 		<appender-ref ref="TECH" />
 	</logger>

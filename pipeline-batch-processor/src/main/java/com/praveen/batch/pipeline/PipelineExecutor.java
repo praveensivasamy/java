@@ -7,33 +7,28 @@ public class PipelineExecutor {
 	private AppConfiguration appConfig;
 
 	public PipelineExecutor(AppConfiguration config) {
-
 		this.appConfig = config;
-
 	}
 
 	public void execute() {
 
-		int threads = 0;
-		if (threads == 1) {
+		if (appConfig.getThreads() == 1) {
 			processSerially();
 		} else {
-			processParallel(threads);
+			processParallel(appConfig.getThreads());
 		}
-
 	}
 
 	private void processParallel(int threads) {
-
 		//Create Pipelines
-		
 	}
 
 	private void processSerially() {
-		Pipeline pipeline = Pipeline.create(appConfig);
 
-		
-		
+		Pipeline pipeline = Pipeline.create(appConfig);
+		pipeline.initialise();
+		pipeline.process();
+
 	}
 
 }

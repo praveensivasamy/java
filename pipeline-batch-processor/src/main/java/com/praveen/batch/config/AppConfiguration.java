@@ -19,6 +19,8 @@ public class AppConfiguration {
 	/** The default instance */
 	protected static AppConfiguration instance;
 
+	private int threads = 1;
+
 	public static AppConfiguration getConfiguration() {
 		return instance;
 	}
@@ -29,7 +31,6 @@ public class AppConfiguration {
 			res = new AppConfiguration();
 			instance = res;
 			res.initialise();
-
 		}
 		return instance;
 
@@ -42,7 +43,11 @@ public class AppConfiguration {
 
 	private void setUpThreadSize() {
 		log.info("Setup Thread size");
-		long totalRecords = 0;
+		threads = 1;
+	}
+
+	public int getThreads() {
+		return threads;
 	}
 
 	public List<Reader> getPipelineReaders() {
@@ -56,7 +61,6 @@ public class AppConfiguration {
 
 	public List<Writer> getPipelineWriters() {
 		return Arrays.asList(new PipelineWriter());
-
 	}
 
 }

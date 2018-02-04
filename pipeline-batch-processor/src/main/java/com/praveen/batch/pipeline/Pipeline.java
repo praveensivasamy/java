@@ -30,15 +30,15 @@ public class Pipeline {
 		return instances.get();
 	}
 
-	private void initialise() {
-
+	protected void initialise() {
+		readers.forEach(reader -> reader.initialise());
 	}
 
 	private void read() {
 
 	}
 
-	private void process() {
+	protected void process() {
 
 	}
 
