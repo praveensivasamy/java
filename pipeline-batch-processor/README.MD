@@ -14,4 +14,5 @@ A java and hibernate framework for ETL.
 - Multithreaded execution
 - Option to halt the process during execution 
 - Multiple DB access *Read from one DB and write to another
-- Logging SQL issued to DB5. Application run time statistics
+- Logging SQL issued to DB. 
+- Application run time statistics such as readers' initialisation time,time taken to process data ,time taken to write etc.
