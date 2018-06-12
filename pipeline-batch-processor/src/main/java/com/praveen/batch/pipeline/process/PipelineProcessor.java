@@ -4,9 +4,9 @@ import com.praveen.batch.pipeline.conatiner.DataContainer;
 
 public class PipelineProcessor extends Processor {
 
-	@Override
-	public DataContainer process(DataContainer container) {
-		return null;
-	}
+    @Override
+    public DataContainer process(DataContainer container) {
+        return null;
+    }
 
 }

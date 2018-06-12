@@ -7,16 +7,16 @@ import com.praveen.batch.pipeline.conatiner.DataContainer;
 
 public abstract class PipeLineElement {
 
-	private static final Logger log = LoggerFactory.getLogger(PipeLineElement.class);
+    private static final Logger log = LoggerFactory.getLogger(PipeLineElement.class);
 
-	public void initialise() {
-		log.info("Initialise called");
-	}
+    public void initialise() {
+        log.info("Initialise called");
+    }
 
-	public abstract DataContainer process(DataContainer container);
+    public abstract DataContainer process(DataContainer container);
 
-	public void tearDown() {
+    public void tearDown() {
 
-	}
+    }
 
 }

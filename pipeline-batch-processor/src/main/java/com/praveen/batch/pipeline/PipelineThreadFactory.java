@@ -6,19 +6,19 @@ import java.util.concurrent.ThreadFactory;
 
 public class PipelineThreadFactory implements ThreadFactory {
 
-	private Map<Thread, Pipeline> mapping = new ConcurrentHashMap<Thread, Pipeline>();
-	private int index = 1;
+    private Map<Thread, Pipeline> mapping = new ConcurrentHashMap<Thread, Pipeline>();
+    private int index = 1;
 
-	@Override
-	public Thread newThread(Runnable r) {
-		return new Thread(r, "Pipeline-Thread-" + index++);
-	}
+    @Override
+    public Thread newThread(Runnable r) {
+        return new Thread(r, "Pipeline-Thread-" + index++);
+    }
 
-	public void put(Thread thread, Pipeline pipeline) {
-		mapping.put(thread, pipeline);
-	}
+    public void put(Thread thread, Pipeline pipeline) {
+        mapping.put(thread, pipeline);
+    }
 
-	public Pipeline getPipeline(Thread thread) {
-		return mapping.get(thread);
-	}
+    public Pipeline getPipeline(Thread thread) {
+        return mapping.get(thread);
+    }
 }

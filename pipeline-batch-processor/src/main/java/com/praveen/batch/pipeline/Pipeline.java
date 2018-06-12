@@ -11,43 +11,41 @@ import com.praveen.batch.pipeline.writer.Writer;
 
 public class Pipeline {
 
-	private ThreadLocal<Pipeline> instances = new ThreadLocal<>();
+    private ThreadLocal<Pipeline> instances = new ThreadLocal<>();
 
-	private List<Reader> readers = new ArrayList<>();
-	private List<Processor> processors = new ArrayList<>();
-	private List<Writer> writers = new ArrayList<>();
-	private List<PipeLineElement> allElements = new ArrayList();
+    private List<Reader> readers = new ArrayList<>();
+    private List<Processor> processors = new ArrayList<>();
+    private List<Writer> writers = new ArrayList<>();
+    private List<PipeLineElement> allElements = new ArrayList();
 
-	private ExecutionBarrier barrier = null;
+    private ExecutionBarrier barrier = null;
 
-	public static Pipeline create(AppConfiguration appConfig) {
-		return new Pipeline(appConfig.getPipelineReaders(), appConfig.getPipelineProcessors(), appConfig.getPipelineWriters());
-	}
+    public static Pipeline create(AppConfiguration appConfig) {
+        return new Pipeline(appConfig.getPipelineReaders(), appConfig.getPipelineProcessors(), appConfig.getPipelineWriters());
+    }
 
-	public Pipeline(List<Reader> readers, List<Processor> processors, List<Writer> writers) {
-		this.readers = readers;
-		this.processors = processors;
-		this.writers = writers;
-		allElements.addAll(readers);
-		allElements.addAll(processors);
-		allElements.addAll(writers);
-	}
+    public Pipeline(List<Reader> readers, List<Processor> processors, List<Writer> writers) {
+        this.readers = readers;
+        this.processors = processors;
+        this.writers = writers;
+        allElements.addAll(readers);
+        allElements.addAll(processors);
+        allElements.addAll(writers);
+    }
 
-	protected void initialise() {
-		instances.set(this);
-		allElements.forEach(element -> element.initialise());
-		await("Pipeline Initialisation");
-	}
+    protected void initialise() {
+        instances.set(this);
+        allElements.forEach(element -> element.initialise());
+        await("Pipeline Initialisation");
+    }
 
+    private void await(String wheretoWait) {
 
-	private void await(String wheretoWait) {
+    }
 
-
-	}
-
-	@Override
-	public String toString() {
-		return this.getClass().getSimpleName() + "#" + hashCode();
-	}
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName() + "#" + hashCode();
+    }
 
 }

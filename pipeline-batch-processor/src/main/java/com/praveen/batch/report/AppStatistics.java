@@ -8,53 +8,52 @@ import com.praveen.commons.utils.ToStringUtils;
 
 public class AppStatistics {
 
-	private static final Logger log = LoggerFactory.getLogger(AppStatistics.class);
+    private static final Logger log = LoggerFactory.getLogger(AppStatistics.class);
 
-	private String instanceName;
+    private String instanceName;
 
-	private static ThreadLocal<AppStatistics> instance = new ThreadLocal<AppStatistics>() {
-		@Override
-		protected AppStatistics initialValue() {
-			AppStatistics stat = new AppStatistics();
-			stat.instanceName = Thread.currentThread().getName();
-			return stat;
-		};
-	};
+    private static ThreadLocal<AppStatistics> instance = new ThreadLocal<AppStatistics>() {
+        @Override
+        protected AppStatistics initialValue() {
+            AppStatistics stat = new AppStatistics();
+            stat.instanceName = Thread.currentThread().getName();
+            return stat;
+        };
+    };
 
-	private AppStatistics() {
+    private AppStatistics() {
 
-	}
+    }
 
-	public static AppStatistics getInstance() {
-		return instance.get();
-	}
+    public static AppStatistics getInstance() {
+        return instance.get();
+    }
 
+    private static StopWatch appStopWatch = new StopWatch();
 
-	private static StopWatch appStopWatch = new StopWatch();
+    private StopWatch pipelineInitialisation;
 
-	private StopWatch pipelineInitialisation;
+    public static void applicationStarted() {
+        appStopWatch.start();
+    }
 
-	public static void applicationStarted() {
-		appStopWatch.start();
-	}
+    public static void applicationFinished() {
+        appStopWatch.stop();
+    }
 
-	public static void applicationFinished() {
-		appStopWatch.stop();
-	}
+    private static long getApplicationExecutionTime() {
+        return appStopWatch.getTime();
+    }
 
-	private static long getApplicationExecutionTime() {
-		return appStopWatch.getTime();
-	}
+    public static void printStatistics() {
 
-	public static void printStatistics() {
+        log.info("Application Execution Time {}", getApplicationExecutionTime());
 
-		log.info("Application Execution Time {}", getApplicationExecutionTime());
+    }
 
-	}
-
-	@Override
-	public String toString() {
-		return ToStringUtils.asString(this, "instanceName");
-	}
+    @Override
+    public String toString() {
+        return ToStringUtils.asString(this, "instanceName");
+    }
 
 }

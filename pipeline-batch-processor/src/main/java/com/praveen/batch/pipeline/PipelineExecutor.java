@@ -4,30 +4,30 @@ import com.praveen.batch.config.AppConfiguration;
 
 public class PipelineExecutor {
 
-	private AppConfiguration appConfig;
+    private AppConfiguration appConfig;
 
-	public PipelineExecutor(AppConfiguration config) {
-		this.appConfig = config;
-	}
+    public PipelineExecutor(AppConfiguration config) {
+        this.appConfig = config;
+    }
 
-	public void execute() {
+    public void execute() {
 
-		if (appConfig.getThreads() == 1) {
-			processSerially();
-		} else {
-			processParallel(appConfig.getThreads());
-		}
-	}
+        if (appConfig.getThreads() == 1) {
+            processSerially();
+        } else {
+            processParallel(appConfig.getThreads());
+        }
+    }
 
-	private void processParallel(int threads) {
-		//Create Pipelines
-	}
+    private void processParallel(int threads) {
+        //Create Pipelines
+    }
 
-	private void processSerially() {
+    private void processSerially() {
 
-		Pipeline pipeline = Pipeline.create(appConfig);
-		pipeline.initialise();
+        Pipeline pipeline = Pipeline.create(appConfig);
+        pipeline.initialise();
 
-	}
+    }
 
 }

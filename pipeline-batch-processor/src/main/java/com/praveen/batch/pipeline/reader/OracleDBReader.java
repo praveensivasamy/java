@@ -5,11 +5,11 @@ import org.slf4j.LoggerFactory;
 
 public class OracleDBReader extends PipelineReader {
 
-	private static final Logger log = LoggerFactory.getLogger(OracleDBReader.class);
+    private static final Logger log = LoggerFactory.getLogger(OracleDBReader.class);
 
-	@Override
-	public void initialise() {
-		super.initialise();
-		log.info("Initialise");
-	}
+    @Override
+    public void initialise() {
+        super.initialise();
+        log.info("Initialise");
+    }
 }
