@@ -7,18 +7,18 @@ import java.math.BigInteger;
  */
 public class BigCounter {
 
-	private BigInteger count = BigInteger.ZERO;
+    private BigInteger count = BigInteger.ZERO;
 
-	public BigInteger count() {
-		return count;
-	}
+    public BigInteger count() {
+        return count;
+    }
 
-	public void inc() {
-		count = count.add(BigInteger.ONE);
-	}
+    public void inc() {
+        count = count.add(BigInteger.ONE);
+    }
 
-	private void incrementThreadSafe() {
+    private void incrementThreadSafe() {
 
-	}
+    }
 
 }

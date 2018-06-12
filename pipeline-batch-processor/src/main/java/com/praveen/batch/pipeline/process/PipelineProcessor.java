@@ -1,6 +1,6 @@
 package com.praveen.batch.pipeline.process;
 
-import com.praveen.batch.pipeline.conatiner.DataContainer;
+import com.praveen.batch.pipeline.container.DataContainer;
 
 public class PipelineProcessor extends Processor {
 

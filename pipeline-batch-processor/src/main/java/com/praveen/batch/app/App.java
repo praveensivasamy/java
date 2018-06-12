@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import com.praveen.batch.config.AppConfiguration;
 import com.praveen.batch.pipeline.PipelineExecutor;
 import com.praveen.batch.report.AppStatistics;
+import com.praveen.batch.util.AppProperties;
+import com.praveen.commons.exception.ApplicationWarning;
 
 /**
  * Base Application Invoker
@@ -23,6 +25,7 @@ public class App {
     }
 
     public void run(String... args) {
+
         log.info("App run");
         AppStatistics.applicationStarted();
         initialise();
@@ -30,11 +33,13 @@ public class App {
         tearDown();
         AppStatistics.applicationFinished();
         AppStatistics.printStatistics();
+
     }
 
     private void initialise() {
         log.info("Initialise");
-        AppConfiguration config = AppConfiguration.create();
+        AppConfiguration.getConfiguration();
+        AppProperties.getInstance();
     }
 
     private void process() {

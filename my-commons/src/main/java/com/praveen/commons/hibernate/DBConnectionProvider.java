@@ -17,63 +17,63 @@ import org.slf4j.LoggerFactory;
  */
 public class DBConnectionProvider extends DriverManagerConnectionProviderImpl {
 
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private static volatile int totalRequests = 0;
-	private static volatile int requestsServedFromCache = 0;
-	private static final Logger log = LoggerFactory.getLogger(DBConnectionProvider.class);
+    private static volatile int totalRequests = 0;
+    private static volatile int requestsServedFromCache = 0;
+    private static final Logger log = LoggerFactory.getLogger(DBConnectionProvider.class);
 
-	private ThreadLocal<Connection> connections = new ThreadLocal<>();
-	private static DBConnectionProvider instance;
+    private ThreadLocal<Connection> connections = new ThreadLocal<>();
+    private static DBConnectionProvider instance;
 
-	public DBConnectionProvider() {
-		instance = this;
-	}
+    public DBConnectionProvider() {
+        instance = this;
+    }
 
-	@Override
-	public Connection getConnection() throws SQLException {
-		totalRequests++;
-		Connection conn = null;
-		try {
-			if (connections.get() == null) {
-				conn = super.getConnection();
-				log.info("Setting new " + conn + " to the ThreadLocal pool");
-				addShutDownHook(conn);
-				connections.set(conn);
-			} else {
-				requestsServedFromCache++;
-			}
-			log.info("Returning existing ThreadLocal connection");
-			return connections.get();
-		} finally {
-			conn.close();
-		}
-	}
+    @Override
+    public Connection getConnection() throws SQLException {
+        totalRequests++;
+        Connection conn = null;
+        try {
+            if (connections.get() == null) {
+                conn = super.getConnection();
+                log.info("Setting new " + conn + " to the ThreadLocal pool");
+                addShutDownHook(conn);
+                connections.set(conn);
+            } else {
+                requestsServedFromCache++;
+            }
+            log.info("Returning existing ThreadLocal connection");
+            return connections.get();
+        } finally {
+            conn.close();
+        }
+    }
 
-	public static DBConnectionProvider instance() {
-		return instance;
-	}
+    public static DBConnectionProvider instance() {
+        return instance;
+    }
 
-	@Override
-	public void closeConnection(Connection conn) throws SQLException {
-		super.closeConnection(conn);
-	}
+    @Override
+    public void closeConnection(Connection conn) throws SQLException {
+        super.closeConnection(conn);
+    }
 
-	public static void logStat() {
-		log.info("Total JDBC Connection requests: " + totalRequests + "; Total requests served from cache: " + requestsServedFromCache);
-	}
+    public static void logStat() {
+        log.info("Total JDBC Connection requests: " + totalRequests + "; Total requests served from cache: " + requestsServedFromCache);
+    }
 
-	private static void addShutDownHook(final Connection connection) {
-		Runtime.getRuntime().addShutdownHook(new Thread(() ->
-			{
-				if (connection != null) {
-					try {
-						System.out.println("Closing Oracle DB connection ...");
-						connection.close();
-					} catch (SQLException ignore) {
-					}
-				}
-			}));
-	}
+    private static void addShutDownHook(final Connection connection) {
+        Runtime.getRuntime().addShutdownHook(new Thread(() ->
+            {
+                if (connection != null) {
+                    try {
+                        System.out.println("Closing Oracle DB connection ...");
+                        connection.close();
+                    } catch (SQLException ignore) {
+                    }
+                }
+            }));
+    }
 
 }

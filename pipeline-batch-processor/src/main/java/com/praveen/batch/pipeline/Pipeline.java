@@ -16,7 +16,7 @@ public class Pipeline {
     private List<Reader> readers = new ArrayList<>();
     private List<Processor> processors = new ArrayList<>();
     private List<Writer> writers = new ArrayList<>();
-    private List<PipeLineElement> allElements = new ArrayList();
+    private List<PipeLineElement> allPipelineElements = new ArrayList<>();
 
     private ExecutionBarrier barrier = null;
 
@@ -28,19 +28,19 @@ public class Pipeline {
         this.readers = readers;
         this.processors = processors;
         this.writers = writers;
-        allElements.addAll(readers);
-        allElements.addAll(processors);
-        allElements.addAll(writers);
+        allPipelineElements.addAll(readers);
+        allPipelineElements.addAll(processors);
+        allPipelineElements.addAll(writers);
     }
 
     protected void initialise() {
         instances.set(this);
-        allElements.forEach(element -> element.initialise());
+        allPipelineElements.forEach(element -> element.initialise());
         await("Pipeline Initialisation");
     }
 
     private void await(String wheretoWait) {
-
+        barrier.await(wheretoWait);
     }
 
     @Override
