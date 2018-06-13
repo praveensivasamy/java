@@ -54,4 +54,15 @@ public class PipelineRange {
         return ToStringUtils.asString(this, "minRange", "maxRange");
     }
 
+    public static List<PipelineRange> create(int threads) {
+
+        List<PipelineRange> res = new ArrayList<>();
+
+        
+        
+        
+        return res;
+
+    }
+
 }

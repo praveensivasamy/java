@@ -65,6 +65,12 @@ public class ApplicationException extends RuntimeException {
         return res;
     }
 
+    public static ApplicationException warn(String warning) {
+        ApplicationException res = new ApplicationException(AppExceptionIdentifier.TECHNICAL_WARNING);
+        res.errorMessage = warning;
+        return res;
+    }
+
     private ApplicationException(Throwable causedException) {
         super(causedException);
     }

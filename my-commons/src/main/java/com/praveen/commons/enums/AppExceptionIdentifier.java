@@ -4,8 +4,9 @@ public enum AppExceptionIdentifier {
     // -------------------------------------------------------------------
 
     /** Any exception which is totally not relevant to the business */
-    TECHNICAL_EXCEPTION(9901, "Unhandled technical exception. {details}");
-
+    TECHNICAL_EXCEPTION(9901, "Technical exception. {details}"),
+    /** Warn the developer for in correct workflow */
+    TECHNICAL_WARNING(9801, "Technical warning");
     // -------------------------------------------------------------------
 
     String message;

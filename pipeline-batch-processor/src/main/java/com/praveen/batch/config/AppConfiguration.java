@@ -6,13 +6,14 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.praveen.batch.pipeline.PipelineRange;
 import com.praveen.batch.pipeline.process.PipelineProcessor;
 import com.praveen.batch.pipeline.process.Processor;
 import com.praveen.batch.pipeline.reader.PipelineReader;
 import com.praveen.batch.pipeline.reader.Reader;
 import com.praveen.batch.pipeline.writer.PipelineWriter;
 import com.praveen.batch.pipeline.writer.Writer;
-import com.praveen.commons.enums.AppExceptionIdentifier;
+import com.praveen.batch.util.AppProperties;
 import com.praveen.commons.exception.ApplicationException;
 
 /**
@@ -35,9 +36,9 @@ public class AppConfiguration {
     public static AppConfiguration getConfiguration() {
 
         if (instance == null) {
-            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("ApplicationConfiguration not initialised !").step("CONFIGURATION INIT");
+            throw ApplicationException
+                    .warn("ApplicationConfiguration not initialised.Initialise " + AppConfiguration.class.getSimpleName() + " using initConfig().");
         }
-
         return instance;
     }
 
@@ -49,19 +50,25 @@ public class AppConfiguration {
 
     private void initialise() {
         log.info("Initialise config...");
-        setUpThreadSize();
+        setUpThreading();
     }
 
     private void setUpThreadSize() {
-        log.info("Setup Thread size");
-        threads = 1;
+        threads = getThreads();
+        log.info("using <{}> threads", threads);
+
     }
 
-    public int getThreads() {
+    
+    private void setUpThreading() {
+     
+        PipelineRange.create(getThreads());
+        
 
-        return threads;
     }
-
+    
+    
+    
     public List<Reader> getPipelineReaders() {
         return Arrays.asList(new PipelineReader());
     }
@@ -73,6 +80,10 @@ public class AppConfiguration {
 
     public List<Writer> getPipelineWriters() {
         return Arrays.asList(new PipelineWriter());
+    }
+
+    public int getThreads() {
+        return AppProperties.getInstance().getThreads();
     }
 
 }

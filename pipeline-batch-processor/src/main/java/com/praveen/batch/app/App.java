@@ -7,7 +7,6 @@ import com.praveen.batch.config.AppConfiguration;
 import com.praveen.batch.pipeline.PipelineExecutor;
 import com.praveen.batch.report.AppStatistics;
 import com.praveen.batch.util.AppProperties;
-import com.praveen.commons.exception.ApplicationWarning;
 
 /**
  * Base Application Invoker
@@ -38,8 +37,7 @@ public class App {
 
     private void initialise() {
         log.info("Initialise");
-        AppConfiguration.getConfiguration();
-        AppProperties.getInstance();
+        AppConfiguration.initConfig();
     }
 
     private void process() {
