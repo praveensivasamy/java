@@ -6,15 +6,13 @@ import java.util.List;
 import java.util.StringTokenizer;
 
 import org.hibernate.Criteria;
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
 import org.hibernate.ScrollMode;
 import org.hibernate.ScrollableResults;
 import org.hibernate.Session;
 import org.hibernate.criterion.Projections;
 import org.hibernate.criterion.Restrictions;
-import org.hibernate.transform.Transformers;
-import org.hibernate.type.Type;
+import org.hibernate.query.NativeQuery;
+import org.hibernate.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -85,14 +83,14 @@ public class JpaDao {
      */
     @SuppressWarnings("unchecked")
     public <T> List<T> query(String queryString, int firstResult, int maxResults) {
-        Query query = session.createQuery(queryString);
+        Query<?> query = session.createQuery(queryString);
         if (firstResult >= 0) {
             query.setFirstResult(firstResult);
         }
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
-        return query.list();
+        return (List<T>) query.list();
     }
 
     /**
@@ -197,7 +195,7 @@ public class JpaDao {
      * @param queryName the name of the query
      * @return the resulting {@link Query} object
      */
-    public Query getNamedQuery(String queryName) {
+    public Query<?> getNamedQuery(String queryName) {
         return session.getNamedQuery(queryName);
     }
 
@@ -303,7 +301,7 @@ public class JpaDao {
      */
     public ScrollableResults getResultSet(String queryString, int fetchSize, String queryHint,
             QueryParameter... params) {
-        Query query = session.createQuery(queryString);
+        Query<?> query = session.createQuery(queryString);
         query.setFetchSize(fetchSize);
         if (queryHint != null) {
             query.addQueryHint(queryHint);
@@ -319,7 +317,7 @@ public class JpaDao {
      */
     public ScrollableResults getResultSet(String queryString, int firstResult, int maxResults,
             QueryParameter... params) {
-        Query query = session.createQuery(queryString);
+        Query<?> query = session.createQuery(queryString);
         query.setFetchSize(1000);
         for (QueryParameter param : params) {
             query.setParameter(param.getName(), param.getValue());
@@ -339,7 +337,7 @@ public class JpaDao {
     }
 
     public List<?> runNativeQuery(String query) {
-        SQLQuery sqlQuery = session.createSQLQuery(query);
+        NativeQuery<?> sqlQuery = session.createNativeQuery(query);
         return sqlQuery.list();
     }
 
@@ -348,7 +346,7 @@ public class JpaDao {
      */
     public ScrollableResults runNativeQuery(String queryString, int fetchSize, String queryHint,
             QueryParameter... params) {
-        SQLQuery sqlQuery = session.createSQLQuery(queryString);
+        NativeQuery<?> sqlQuery = session.createNativeQuery(queryString);
         sqlQuery.setFetchSize(fetchSize);
         if (queryHint != null) {
             sqlQuery.addQueryHint(queryHint);
@@ -359,54 +357,18 @@ public class JpaDao {
         return sqlQuery.scroll(ScrollMode.FORWARD_ONLY);
     }
 
-    /**
-     * Convenience method to get {@link ScrollableResults} for oracle native SQL and transform the results with {@link Transformers}
-     *
-     * @param queryString - the JPA query string
-     * @param fetchSize - the ResultSet fetch size
-     * @param queryHint - Oracle HINTs
-     * @param transformer - A bean to store results
-     * @param columnAliasMapping - {@link ColumnAliasMapping}
-     * @param params - {@link QueryParameter}
-     * @return
-     */
-    public ScrollableResults runTransFormableResultSQLQuery(String queryString, int fetchSize, String queryHint,
-            Class<?> transformer, ColumnAliasMapping[] columnAliasMapping, QueryParameter... params) {
-
-        SQLQuery sqlQuery = session.createSQLQuery(queryString);
-        sqlQuery.setFetchSize(fetchSize);
-        if (queryHint != null) {
-            sqlQuery.addQueryHint(queryHint);
-        }
-        for (ColumnAliasMapping columnResultParam : columnAliasMapping) {
-            Type columnType = columnResultParam.getColumnType();
-            if (columnType == null) {
-                sqlQuery.addScalar(columnResultParam.getAliasName());
-            } else {
-                sqlQuery.addScalar(columnResultParam.getAliasName(), columnResultParam.getColumnType());
-            }
-        }
-        for (QueryParameter param : params) {
-            sqlQuery.setParameter(param.getName(), param.getValue());
-        }
-        if (transformer != null) {
-            sqlQuery.setResultTransformer(Transformers.aliasToBean(transformer));
-        }
-        return sqlQuery.scroll();
-    }
-
     public int runNativeInsert(String query) {
-        SQLQuery sqlQuery = session.createSQLQuery(query);
+        NativeQuery<?> sqlQuery = session.createNativeQuery(query);
         return sqlQuery.executeUpdate();
     }
 
     public int runNativeUpdate(String query) {
-        SQLQuery sqlQuery = session.createSQLQuery(query);
+        NativeQuery<?> sqlQuery = session.createNativeQuery(query);
         return sqlQuery.executeUpdate();
     }
 
     public int runJpaUpdate(String jpaUpdate, QueryParameter... parameters) {
-        Query query = session.createQuery(jpaUpdate);
+        Query<?> query = session.createQuery(jpaUpdate);
         for (QueryParameter param : parameters) {
             query.setParameter(param.getName(), param.getValue());
         }
@@ -414,7 +376,7 @@ public class JpaDao {
     }
 
     public void runNativeSql(String sql) {
-        SQLQuery sqlQuery = session.createSQLQuery(sql);
+        NativeQuery<?> sqlQuery = session.createNativeQuery(sql);
         sqlQuery.executeUpdate();
     }
 

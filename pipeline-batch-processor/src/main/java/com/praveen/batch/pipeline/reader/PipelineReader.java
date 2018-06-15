@@ -20,4 +20,10 @@ public class PipelineReader extends Reader {
         return null;
     }
 
+    @Override
+    public String toString() {
+        String res = getClass().getSimpleName();
+        return res + "#" + hashCode();
+    }
+
 }

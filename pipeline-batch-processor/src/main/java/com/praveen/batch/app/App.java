@@ -6,17 +6,14 @@ import org.slf4j.LoggerFactory;
 import com.praveen.batch.config.AppConfiguration;
 import com.praveen.batch.pipeline.PipelineExecutor;
 import com.praveen.batch.report.AppStatistics;
-import com.praveen.batch.util.AppProperties;
 
 /**
- * Base Application Invoker
+ * Base Application Invoker.
  * 
  * @author Praveen Sivasamy
- *
  */
 
 public class App {
-
     private static final Logger log = LoggerFactory.getLogger(App.class);
 
     public static void main(String... args) {
@@ -24,7 +21,6 @@ public class App {
     }
 
     public void run(String... args) {
-
         log.info("App run");
         AppStatistics.applicationStarted();
         initialise();
@@ -32,7 +28,6 @@ public class App {
         tearDown();
         AppStatistics.applicationFinished();
         AppStatistics.printStatistics();
-
     }
 
     private void initialise() {
@@ -50,5 +45,4 @@ public class App {
     private void tearDown() {
         log.info("Tear Down");
     }
-
 }

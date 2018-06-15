@@ -55,4 +55,8 @@ public class ExecutionBarrier {
         return ToStringUtils.asString(this, "exceptions", "barrier");
     }
 
+    public void setException(Throwable e) {
+        this.exceptions.add(e);
+    }
+
 }

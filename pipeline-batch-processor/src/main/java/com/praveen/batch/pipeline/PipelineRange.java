@@ -31,7 +31,7 @@ public class PipelineRange {
         this.maxRange = maxRange;
     }
 
-    private static List<PipelineRange> createRange(Long min, Long max, int parts) {
+    public static List<PipelineRange> createRange(Long min, Long max, int parts) {
         List<PipelineRange> res = new ArrayList<>();
         long start = min;
         long interval = (max - min) / parts;
@@ -49,20 +49,18 @@ public class PipelineRange {
 
     }
 
+    public static List<PipelineRange> createRange(int parts) {
+        List<PipelineRange> res = new ArrayList<>();
+        for (int i = 0; i < parts; i++) {
+            res.add(new PipelineRange(1, 1));
+        }
+        return res;
+
+    }
+
     @Override
     public String toString() {
         return ToStringUtils.asString(this, "minRange", "maxRange");
-    }
-
-    public static List<PipelineRange> create(int threads) {
-
-        List<PipelineRange> res = new ArrayList<>();
-
-        
-        
-        
-        return res;
-
     }
 
 }
