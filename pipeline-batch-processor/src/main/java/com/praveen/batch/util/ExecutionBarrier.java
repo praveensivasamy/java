@@ -1,4 +1,4 @@
-package com.praveen.batch.pipeline.core;
+package com.praveen.batch.util;
 
 import java.util.ArrayList;
 import java.util.List;

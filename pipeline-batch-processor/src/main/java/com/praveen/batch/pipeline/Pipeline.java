@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.praveen.batch.config.AppConfiguration;
 import com.praveen.batch.pipeline.container.PipeLineDataContainer;
-import com.praveen.batch.pipeline.core.ExecutionBarrier;
 import com.praveen.batch.pipeline.process.Processor;
 import com.praveen.batch.pipeline.reader.Reader;
 import com.praveen.batch.pipeline.writer.Writer;
+import com.praveen.batch.util.ExecutionBarrier;
 import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
 

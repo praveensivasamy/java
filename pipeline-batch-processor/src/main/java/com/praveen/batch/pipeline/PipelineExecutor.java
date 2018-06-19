@@ -9,7 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.praveen.batch.config.AppConfiguration;
-import com.praveen.batch.pipeline.core.ExecutionBarrier;
+import com.praveen.batch.util.ExecutionBarrier;
 
 /**
  * Executes {@link Pipeline}s either in serial or parallel depending on the threadsize
