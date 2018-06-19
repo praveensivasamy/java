@@ -6,6 +6,12 @@ import org.slf4j.LoggerFactory;
 
 import com.praveen.commons.utils.ToStringUtils;
 
+/**
+ * Application statistics for reports
+ * 
+ * @author Praveen Sivasamy
+ *
+ */
 public class AppStatistics {
 
     private static final Logger log = LoggerFactory.getLogger(AppStatistics.class);

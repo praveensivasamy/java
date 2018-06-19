@@ -3,7 +3,7 @@ package com.praveen.batch.pipeline.process;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.praveen.batch.pipeline.container.DataContainer;
+import com.praveen.batch.pipeline.container.PipeLineDataContainer;
 
 public class PipelineProcessor extends Processor {
 
@@ -15,7 +15,7 @@ public class PipelineProcessor extends Processor {
     }
 
     @Override
-    public DataContainer process(DataContainer container) {
+    public PipeLineDataContainer process(PipeLineDataContainer container) {
         return null;
     }
 

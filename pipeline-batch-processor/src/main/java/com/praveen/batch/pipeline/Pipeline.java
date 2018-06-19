@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.praveen.batch.config.AppConfiguration;
+import com.praveen.batch.pipeline.container.PipeLineDataContainer;
 import com.praveen.batch.pipeline.core.ExecutionBarrier;
 import com.praveen.batch.pipeline.process.Processor;
 import com.praveen.batch.pipeline.reader.Reader;
@@ -13,6 +17,12 @@ import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
 
 /**
+ * <pre>
+ * This is the base strucutre of the pipeline batch processor. It draws analogy of a waterpipeline. The pipeline has pipeline elements.Each element
+ * has respective functions. The following piprline elements are defined : {@link Reader} : Reads the data from the input source -> Extractor
+ * {@link Processor} : Works on the data received from the reader -> Transformer {@link Writer} : Writes the data back to the system specified ->
+ * loader
+ * 
  * Holds {@link PipeLineElement} and operates on them
  * 
  * @author Praveen Sivasamy
@@ -20,6 +30,8 @@ import com.praveen.commons.exception.ApplicationException;
  */
 
 public class Pipeline {
+
+    private static final Logger log = LoggerFactory.getLogger(Pipeline.class);
 
     /** Create a threadlocal of Pipeline element */
     private ThreadLocal<Pipeline> instances = new ThreadLocal<>();
@@ -32,6 +44,8 @@ public class Pipeline {
     private PipelineRange pipelineRange;
     private ExecutionBarrier barrier = null;
     private int pipelineId;
+
+    private PipeLineDataContainer dataContainer;
     private static AtomicInteger counter = new AtomicInteger();
 
     public static Pipeline create(AppConfiguration appConfig) {
@@ -66,21 +80,29 @@ public class Pipeline {
                     throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Error during pipeline initialization for : " + element);
                 }
             });
-
         await("Pipeline Initialisation");
     }
 
     public void processContracts() {
-        read();
-        process();
-        write();
+        try {
+            read();
+            process();
+            write();
+        } finally {
+            await("Pipeline processContracts");
+        }
     }
 
     private void read() {
 
+        for (Reader reader : readers) {
+            dataContainer = reader.process(dataContainer);
+        }
+
     }
 
     private void write() {
+        log.info("Writing {}", this.getClass().getSimpleName());
     }
 
     private void process() {
@@ -88,12 +110,13 @@ public class Pipeline {
     }
 
     public void tearDown() {
-
+        await("Pipeline tearDown()");
     }
 
     private void await(String wheretoWait) {
         if (barrier != null) {
             barrier.await(wheretoWait);
+            log.info("Pending parties {}", barrier.getPendingParties());
         }
     }
 

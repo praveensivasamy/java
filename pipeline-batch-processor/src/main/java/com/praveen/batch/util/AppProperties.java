@@ -19,7 +19,7 @@ public class AppProperties {
 
     private Properties props;
 
-    public static AppProperties getInstance() {
+    public static AppProperties instance() {
         if (instance == null) {
             throw ApplicationException.warn("AppProperties not initialised properly.");
         }

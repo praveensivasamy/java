@@ -6,7 +6,7 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.praveen.batch.pipeline.PipelineRange;
+import com.praveen.batch.pipeline.PipeLineElement;
 import com.praveen.batch.pipeline.process.PipelineProcessor;
 import com.praveen.batch.pipeline.process.Processor;
 import com.praveen.batch.pipeline.reader.OracleDBReader;
@@ -18,14 +18,14 @@ import com.praveen.batch.util.AppProperties;
 import com.praveen.commons.exception.ApplicationException;
 
 /**
- * Base configuration which is accessible across various classes
+ * Base configuration which is accessible across various {@link PipeLineElement}s
  * 
  * The pre-requisite is that this class has to be initialised before using.
- * 
  * 
  * @author Praveen Sivasamy
  */
 public class AppConfiguration {
+
     private static final Logger log = LoggerFactory.getLogger(AppConfiguration.class);
 
     /** The default instance. */
@@ -52,17 +52,25 @@ public class AppConfiguration {
         setUpThreading();
     }
 
-    private void setUpThreadSize() {
-        threads = getThreads();
-        log.info("using <{}> threads", threads);
+    private void setUpThreading() {
+        threads = AppProperties.instance().getThreads();
     }
 
-    private void setUpThreading() {
-        PipelineRange.createRange(getThreads());
+    public int getThreads() {
+        return this.threads;
+    }
+
+    /**
+     * override default threadsize
+     * 
+     * @param threads
+     */
+    public void setThreadSize(int threads) {
+        this.threads = threads;
     }
 
     public List<Reader> getPipelineReaders() {
-        return Arrays.asList(new PipelineReader(),new OracleDBReader());
+        return Arrays.asList(new PipelineReader(), new OracleDBReader());
     }
 
     public List<Processor> getPipelineProcessors() {
@@ -73,7 +81,4 @@ public class AppConfiguration {
         return Arrays.asList(new PipelineWriter());
     }
 
-    public int getThreads() {
-        return AppProperties.getInstance().getThreads();
-    }
 }

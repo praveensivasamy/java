@@ -3,7 +3,7 @@ package com.praveen.batch.pipeline.reader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.praveen.batch.pipeline.container.DataContainer;
+import com.praveen.batch.pipeline.container.PipeLineDataContainer;
 
 public class PipelineReader extends Reader {
 
@@ -12,12 +12,13 @@ public class PipelineReader extends Reader {
     @Override
     public void initialise() {
         super.initialise();
-        log.info("Pipeline Reader");
+        log.info("Initialise {}", this);
     }
 
     @Override
-    public DataContainer process(DataContainer container) {
-        return null;
+    public PipeLineDataContainer process(PipeLineDataContainer container) {
+        container = new PipeLineDataContainer();
+        return container;
     }
 
     @Override

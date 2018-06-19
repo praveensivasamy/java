@@ -24,20 +24,23 @@ public class PipelineExecutor {
     private AppConfiguration appConfig;
     private ExecutionBarrier barrier;
     private ExecutorService executor;
+    /** Custom implementation ThreadFactory to ensure the pipelines are executed by same threads who created them */
     private PipelineThreadFactory pipelineThreadFactory;
     private List<Pipeline> pipelines;
+    private int threads = 0;
 
     public PipelineExecutor(AppConfiguration config) {
         pipelineThreadFactory = new PipelineThreadFactory();
         this.appConfig = config;
+        this.threads = appConfig.getThreads();
     }
 
     public void execute() {
-        
-        if (appConfig.getThreads() == 1) {
+
+        if (threads == 1) {
             processSerially();
         } else {
-            processParallel(appConfig.getThreads());
+            processParallel();
         }
     }
 
@@ -49,23 +52,26 @@ public class PipelineExecutor {
         pipeline.tearDown();
     }
 
-    private void processParallel(int threads) {
-
+    private void processParallel() {
         executor = Executors.newFixedThreadPool(threads, pipelineThreadFactory);
-        barrier = new ExecutionBarrier(threads + 1);
+        barrier = new ExecutionBarrier(threads + 1);//threads+1 to invite main thread as well for waitng party
+
         try {
-            createPipelines(threads);
+            createPipelines();
+            
             initialisePipelines();
+            
             executePipelines();
+
             tearDownPipelines();
+
         } finally {
             executor.shutdown();
         }
-
     }
 
-    private void createPipelines(int threads) {
-        //Use overloaded methods to create ranges
+    private void createPipelines() {
+        //Use overloaded methods to create ranges as needed
         List<PipelineRange> ranges = PipelineRange.createRange(threads);
         pipelines = new ArrayList<>();
         for (PipelineRange pipelineRange : ranges) {
@@ -87,17 +93,37 @@ public class PipelineExecutor {
 
                 });
         }
-        barrier.await("After PipelineInitialisation");
+        
+        barrier.await("After Pipeline Initialisation");
     }
 
     private void executePipelines() {
-        log.info("execute Pipelines");
         barrier.reset();
+        for (int i = 0; i < threads; i++) {
+            executor.execute(() ->
+                {
+                    Pipeline pipeline = pipelineThreadFactory.getPipeline(Thread.currentThread());
+                    log.info("Executing pipeline {} in the thread {}", pipeline.getId(), Thread.currentThread().getName());
+                    pipeline.processContracts();
+                });
+        }
+        barrier.await("Executing pipelines");
     }
 
     private void tearDownPipelines() {
         log.info("tearDown Pipelines");
+
         barrier.reset();
+        for (int i = 0; i < threads; i++) {
+            executor.execute(() ->
+                {
+                    Pipeline pipeline = pipelineThreadFactory.getPipeline(Thread.currentThread());
+                    log.info("tearDown pipeline {} in the thread {}", pipeline.getId(), Thread.currentThread().getName());
+                    pipeline.tearDown();
+                });
+        }
+
+        barrier.await("tearDown pipelines");
     }
 
 }

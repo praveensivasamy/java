@@ -3,10 +3,18 @@ package com.praveen.batch.pipeline;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.praveen.batch.pipeline.container.DataContainer;
+import com.praveen.batch.pipeline.container.PipeLineDataContainer;
 import com.praveen.batch.report.AppStatistics;
 
+/**
+ * These are working units inside the pipeline
+ * 
+ * @author Praveen Sivasamy
+ *
+ */
+
 public abstract class PipeLineElement {
+
     private static final Logger log = LoggerFactory.getLogger(PipeLineElement.class);
 
     protected AppStatistics stat;
@@ -15,7 +23,7 @@ public abstract class PipeLineElement {
         stat = AppStatistics.getInstance();
     }
 
-    public abstract DataContainer process(DataContainer container);
+    public abstract PipeLineDataContainer process(PipeLineDataContainer container);
 
     public void tearDown() {
 

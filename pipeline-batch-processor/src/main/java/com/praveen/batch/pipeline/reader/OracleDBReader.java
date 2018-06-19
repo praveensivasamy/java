@@ -9,7 +9,6 @@ public class OracleDBReader extends PipelineReader {
 
     @Override
     public void initialise() {
-        super.initialise();
-        log.info("Initialise");
+        log.info("Initialise {}",this);
     }
 }
