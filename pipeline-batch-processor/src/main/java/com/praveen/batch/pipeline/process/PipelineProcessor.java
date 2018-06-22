@@ -10,7 +10,7 @@ public class PipelineProcessor extends Processor {
     private static final Logger log = LoggerFactory.getLogger(PipelineProcessor.class);
 
     @Override
-    public void initialise() {
+    public void initialize() {
         log.info("Pipeline Processor");
     }
 

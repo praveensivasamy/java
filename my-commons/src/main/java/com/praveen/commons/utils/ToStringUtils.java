@@ -11,7 +11,7 @@ import java.util.Map;
 
 import javax.persistence.Entity;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.DateTime;
 
 import com.praveen.commons.enums.AppExceptionIdentifier;

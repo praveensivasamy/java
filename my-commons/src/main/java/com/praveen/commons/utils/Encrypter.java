@@ -2,14 +2,13 @@ package com.praveen.commons.utils;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
+import java.util.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.spec.PBEParameterSpec;
-
-import org.apache.commons.codec.binary.Base64;
 
 /**
  * Encrypts and decrypts strings (e.g. passwords to store in property files)
@@ -81,7 +80,7 @@ public class Encrypter {
      * @return base64 string
      */
     private static String base64Encode(byte[] bytes) {
-        byte[] base64 = Base64.encodeBase64(bytes);
+        byte[] base64 = Base64.getEncoder().encode(bytes);
         String result = "";
         for (int i = 0; i < base64.length; i++) {
             result += (char) base64[i];
@@ -97,7 +96,7 @@ public class Encrypter {
      * @throws IOException
      */
     private static byte[] base64Decode(String property) throws IOException {
-        return Base64.decodeBase64(property.getBytes());
+        return Base64.getDecoder().decode(property.getBytes());
     }
 
 }

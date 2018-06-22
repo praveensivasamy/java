@@ -1,6 +1,7 @@
 package com.praveen.commons.hibernate;
 
 import java.sql.Connection;
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.praveen.commons.utils.DateUtils;
 import com.praveen.commons.utils.ToStringUtils;
 
 /**
@@ -48,7 +50,7 @@ public class HibernateProvider {
     }
 
     private void initializeSessionFactory() {
-        long time = System.currentTimeMillis();
+        Instant start = Instant.now();
         try {
             StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure(configFile).build();
             Metadata metaData = new MetadataSources(ssr).getMetadataBuilder().build();
@@ -59,8 +61,11 @@ public class HibernateProvider {
             // hibernate background thread prevents clean application exit - cannot call sessionFactory.close()
             // as the sessionFactory will be null in case of exceptions
             System.exit(1);
+        } finally {
+            Instant end = Instant.now();
+            log.info("Hibernate initialized in {}", DateUtils.getElapsedDuration(start, end));
         }
-        log.info("Hibernate initialized in " + (System.currentTimeMillis() - time) + " ms.");
+
     }
 
     /**
@@ -76,7 +81,6 @@ public class HibernateProvider {
                 res = new HibernateProvider(configFile, dbInterceptor);
                 instances.put(getMapKey(configFile, dbInterceptor), res);
             }
-
             return res;
         }
     }
@@ -101,11 +105,10 @@ public class HibernateProvider {
     private HibernateProvider(String configFile, String connString, Interceptor dbInterceptor) {
         this.configFile = configFile;
         this.interceptor = dbInterceptor;
-        url = ToStringUtils.getUrl(connString);
-        user = ToStringUtils.getUser(connString);
-        password = ToStringUtils.getPassword(connString);
-        defaultSchema = ToStringUtils.getSchema(connString);
-
+        this.url = ToStringUtils.getUrl(connString);
+        this.user = ToStringUtils.getUser(connString);
+        this.password = ToStringUtils.getPassword(connString);
+        this.defaultSchema = ToStringUtils.getSchema(connString);
         initializeSessionFactory();
     }
 

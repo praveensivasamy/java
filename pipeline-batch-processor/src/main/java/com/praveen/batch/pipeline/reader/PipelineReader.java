@@ -10,8 +10,8 @@ public class PipelineReader extends Reader {
     private static final Logger log = LoggerFactory.getLogger(PipelineReader.class);
 
     @Override
-    public void initialise() {
-        super.initialise();
+    public void initialize() {
+        super.initialize();
         log.info("Initialise {}", this);
     }
 

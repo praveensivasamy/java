@@ -47,7 +47,7 @@ public class PipelineExecutor {
     private void processSerially() {
         Pipeline pipeline = Pipeline.create(appConfig);
         log.info(pipeline.toString());
-        pipeline.initialise();
+        pipeline.initialize();
         pipeline.processContracts();
         pipeline.tearDown();
     }
@@ -59,7 +59,7 @@ public class PipelineExecutor {
         try {
             createPipelines();
             
-            initialisePipelines();
+            initializePipelines();
             
             executePipelines();
 
@@ -82,14 +82,14 @@ public class PipelineExecutor {
         }
     }
 
-    private void initialisePipelines() {
+    private void initializePipelines() {
         log.info("Initialise Pipelines");
         for (Pipeline pipeline : pipelines) {
             executor.execute(() ->
                 {
                     log.info("Initialising pipeline {} in the thread {}", pipeline.getId(), Thread.currentThread().getName());
                     pipelineThreadFactory.put(Thread.currentThread(), pipeline);
-                    pipeline.initialise();
+                    pipeline.initialize();
 
                 });
         }

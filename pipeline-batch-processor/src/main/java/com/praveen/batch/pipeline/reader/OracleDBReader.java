@@ -8,7 +8,7 @@ public class OracleDBReader extends PipelineReader {
     private static final Logger log = LoggerFactory.getLogger(OracleDBReader.class);
 
     @Override
-    public void initialise() {
+    public void initialize() {
         log.info("Initialise {}",this);
     }
 }

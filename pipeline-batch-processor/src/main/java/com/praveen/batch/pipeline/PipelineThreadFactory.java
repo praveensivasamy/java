@@ -13,7 +13,7 @@ import java.util.concurrent.ThreadFactory;
  * 2.Holds mapping of {@link Thread#currentThread()} and the {@link Pipeline}.This mapping ensures that, each pipeline is executed with its respecitve
  * thread with which it was initialised
  * 
- * The {@link #mapping} is filled during the {@link Pipeline#initialise()} and re-used in {@link Pipeline#processContracts()} 
+ * The {@link #mapping} is filled during the {@link Pipeline#initialize()} and re-used in {@link Pipeline#processContracts()} 
  *  and {@link Pipeline#tearDown()}
  * 
  * @author Praveen Sivasamy

@@ -66,12 +66,12 @@ public class Pipeline {
         return instances;
     }
 
-    protected void initialise() {
+    protected void initialize() {
         instances.set(this);
         allPipelineElements.forEach(element ->
             {
                 try {
-                    element.initialise();
+                    element.initialize();
                 } catch (Exception e) {
                     if (barrier != null) {
                         barrier.setException(e);

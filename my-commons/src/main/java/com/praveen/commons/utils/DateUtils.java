@@ -1,17 +1,20 @@
 package com.praveen.commons.utils;
 
-import static org.apache.commons.lang.time.DateUtils.addMonths;
-import static org.apache.commons.lang.time.DateUtils.ceiling;
-import static org.apache.commons.lang.time.DateUtils.setDays;
-import static org.apache.commons.lang.time.DateUtils.toCalendar;
-import static org.apache.commons.lang.time.DateUtils.truncate;
+import static org.apache.commons.lang3.time.DateUtils.addMonths;
+import static org.apache.commons.lang3.time.DateUtils.ceiling;
+import static org.apache.commons.lang3.time.DateUtils.setDays;
+import static org.apache.commons.lang3.time.DateUtils.toCalendar;
+import static org.apache.commons.lang3.time.DateUtils.truncate;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
 
@@ -116,7 +119,7 @@ public class DateUtils {
         Calendar cal = Calendar.getInstance();
         int dayOfWeek;
         do {
-            res = org.apache.commons.lang.time.DateUtils.addDays(res, -1);
+            res = DateUtils.addDays(res, -1);
             cal.setTime(res);
             dayOfWeek = cal.get(Calendar.DAY_OF_WEEK);
         } while ((dayOfWeek == Calendar.SATURDAY) || (dayOfWeek == Calendar.SUNDAY));
@@ -175,5 +178,16 @@ public class DateUtils {
         DateTime dateTime = new DateTime(date);
         dateTime = dateTime.plusYears(years);
         return dateTime.toDate();
+    }
+
+    /**
+     * Formats time taken between two {@link Instant} checkpoints
+     * 
+     * @param start {@link Instant}
+     * @param end {@link Instant}
+     * @return elapsed time as formatted string in human readable format
+     */
+    public static String getElapsedDuration(Instant start, Instant end) {
+        return DurationFormatUtils.formatDurationWords(Duration.between(start, end).toMillis(), true, true);
     }
 }

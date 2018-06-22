@@ -14,8 +14,8 @@ import org.slf4j.LoggerFactory;
 
 import com.mapping.commons.ITemplateUploader;
 import com.mapping.commons.MappingConstants;
-import com.mapping.enums.MappingExceptions;
 import com.mapping.parser.input.AbstractMappingEntity;
+import com.praveen.commons.enums.AppExceptionIdentifier;
 import com.praveen.commons.exception.ApplicationException;
 import com.praveen.commons.hibernate.HibernateProvider;
 import com.praveen.commons.hibernate.JpaDao;
@@ -29,131 +29,131 @@ import com.praveen.commons.hibernate.JpaDao;
  */
 public abstract class AbstractTemplateUploader<T extends AbstractMappingEntity> extends MappingConstants implements ITemplateUploader<T> {
 
-	private static final Logger log = LoggerFactory.getLogger(AbstractTemplateUploader.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractTemplateUploader.class);
 
-	private static HibernateProvider configProvider = null;
-	private static JpaDao dao = null;
+    private static HibernateProvider configProvider = null;
+    private static JpaDao dao = null;
 
-	protected static Workbook workbook = null;
-	protected static Sheet sheet = null;
-	/** Input file to persist in DB */
-	protected File templateFile;
-	/** Retrieve the persistent class from the type T */
-	private Class<T> persistentClass;
+    protected static Workbook workbook = null;
+    protected static Sheet sheet = null;
+    /** Input file to persist in DB */
+    protected File templateFile;
+    /** Retrieve the persistent class from the type T */
+    private Class<T> persistentClass;
 
-	@SuppressWarnings("unchecked")
-	public AbstractTemplateUploader(File templateFile) throws ApplicationException {
-		this.templateFile = templateFile;
-		if (!templateFile.exists()) {
-			throw ApplicationException.instance(MappingExceptions.INPUT_EXCEPTION).details("The input file : " + templateFile + " not found or does not exist!");
-		}
-		this.persistentClass = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
-	}
+    @SuppressWarnings("unchecked")
+    public AbstractTemplateUploader(File templateFile) throws ApplicationException {
+        this.templateFile = templateFile;
+        if (!templateFile.exists()) {
+            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("The input file : " + templateFile + " not found or does not exist!");
+        }
+        this.persistentClass = ((Class<T>) ((ParameterizedType) getClass().getGenericSuperclass()).getActualTypeArguments()[0]);
+    }
 
-	/**
-	 * Load the template {@link AbstractTemplateUploader#templateFile} in memory
-	 */
-	@Override
-	public void initialise() {
-		try {
-			if (workbook == null) {
-				workbook = WorkbookFactory.create(templateFile);
-			}
-			sheet = workbook.getSheet(RELEVANT_SHEET);
-		} catch (InvalidFormatException e) {
-			throw ApplicationException.instance(MappingExceptions.INVALID_FILE_FORMAT, e).details("Invalid input file" + templateFile);
-		} catch (IOException e) {
-			throw ApplicationException.instance(MappingExceptions.FILE_IO_EXCEPTION, e).details("Error processing the file  : " + templateFile);
-		}
-		log.info("Initialised sheet : {}", sheet.getSheetName());
+    /**
+     * Load the template {@link AbstractTemplateUploader#templateFile} in memory
+     */
+    @Override
+    public void initialise() {
+        try {
+            if (workbook == null) {
+                workbook = WorkbookFactory.create(templateFile);
+            }
+            sheet = workbook.getSheet(RELEVANT_SHEET);
+        } catch (InvalidFormatException e) {
+            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Invalid input file" + templateFile);
+        } catch (IOException e) {
+            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e).details("Error processing the file  : " + templateFile);
+        }
+        log.info("Initialised sheet : {}", sheet.getSheetName());
 
-	}
+    }
 
-	/**
-	 * Implementation to check if the given {@link AbstractTemplateUploader#templateFile} is valid
-	 */
-	@Override
-	public abstract boolean isValidTemplate();
+    /**
+     * Implementation to check if the given {@link AbstractTemplateUploader#templateFile} is valid
+     */
+    @Override
+    public abstract boolean isValidTemplate();
 
-	/**
-	 * Parse the {@link Row} of {@link AbstractTemplateUploader#templateFile}
-	 */
-	@Override
-	public abstract T parse(Row row);
+    /**
+     * Parse the {@link Row} of {@link AbstractTemplateUploader#templateFile}
+     */
+    @Override
+    public abstract T parse(Row row);
 
-	@Override
-	public void save(T destinationRecord) {
-		//TODO: Handle batch
-		dao.saveOrUpdate(destinationRecord);
-	}
+    @Override
+    public void save(T destinationRecord) {
+        //TODO: Handle batch
+        dao.saveOrUpdate(destinationRecord);
+    }
 
-	/**
-	 * process the each {@link Row} and persist to database
-	 */
-	protected void process() {
-		if (isValidTemplate()) {
-			try {
-				log.info("processing ...");
-				dao.beginTransaction();
-				for (Row row : sheet) {
-					T destinationRecord = parse(row);
-					if (destinationRecord.isSave()) {
-						destinationRecord.setUploadedFile(templateFile.getName());
-						save(destinationRecord);
-					}
-				}
-				dao.flushAndClear();
-				dao.commit();
-			} catch (Exception ex) {
-				dao.rollBack();
-				throw ApplicationException.instance(MappingExceptions.TECHNICAL_EXCEPTION, ex).details("Error during save");
-			} finally {
-				tearDown();
-			}
-		} else {
-			throw ApplicationException.instance(MappingExceptions.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + templateFile);
-		}
-		log.info("processing done.");
-	}
+    /**
+     * process the each {@link Row} and persist to database
+     */
+    protected void process() {
+        if (isValidTemplate()) {
+            try {
+                log.info("processing ...");
+                dao.beginTransaction();
+                for (Row row : sheet) {
+                    T destinationRecord = parse(row);
+                    if (destinationRecord.isSave()) {
+                        destinationRecord.setUploadedFile(templateFile.getName());
+                        save(destinationRecord);
+                    }
+                }
+                dao.flushAndClear();
+                dao.commit();
+            } catch (Exception ex) {
+                dao.rollBack();
+                throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, ex).details("Error during save");
+            } finally {
+                tearDown();
+            }
+        } else {
+            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + templateFile);
+        }
+        log.info("processing done.");
+    }
 
-	protected void run() {
-		prechecks();
-		initialise();
-		process();
-		tearDown();
-	}
+    protected void run() {
+        prechecks();
+        initialise();
+        process();
+        tearDown();
+    }
 
-	/**
-	 * check if the {@link AbstractTemplateUploader#templateFile} is already uploaded to DB
-	 *
-	 * @return
-	 */
+    /**
+     * check if the {@link AbstractTemplateUploader#templateFile} is already uploaded to DB
+     *
+     * @return
+     */
 
-	private void prechecks() {
-		initialiseHibernate();
-		log.debug("Checking {}.class", persistentClass.getSimpleName());
-		Long count = dao.getCountByCriteria(persistentClass, "uploadedFile", templateFile.getName());
-		tearDown();
-		if (count > 0) {
-			log.error("Already processed : {}", templateFile);
-			throw ApplicationException.instance(MappingExceptions.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + templateFile);
-		}
-	}
+    private void prechecks() {
+        initialiseHibernate();
+        log.debug("Checking {}.class", persistentClass.getSimpleName());
+        Long count = dao.getCountByCriteria(persistentClass, "uploadedFile", templateFile.getName());
+        tearDown();
+        if (count > 0) {
+            log.error("Already processed : {}", templateFile);
+            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Invalid Template for parsing" + templateFile);
+        }
+    }
 
-	/**
-	 * initialise the {@link JpaDao}
-	 */
-	private void initialiseHibernate() {
-		configProvider = HibernateProvider.instance(MAPPING_CONFIG_FILE, null);
-		dao = JpaDao.instance(configProvider);
-		log.info(dao.toString());
-	}
+    /**
+     * initialise the {@link JpaDao}
+     */
+    private void initialiseHibernate() {
+        configProvider = HibernateProvider.instance(MAPPING_CONFIG_FILE, null);
+        dao = JpaDao.instance(configProvider);
+        log.info(dao.toString());
+    }
 
-	/**
-	 * Cleanup and housekeeping
-	 */
-	private void tearDown() {
-		HibernateProvider.tearDownAll();
-	}
+    /**
+     * Cleanup and housekeeping
+     */
+    private void tearDown() {
+        HibernateProvider.tearDownAll();
+    }
 
 }

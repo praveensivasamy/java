@@ -19,7 +19,7 @@ public abstract class PipeLineElement {
 
     protected AppStatistics stat;
 
-    public void initialise() {
+    public void initialize() {
         stat = AppStatistics.getInstance();
     }
 

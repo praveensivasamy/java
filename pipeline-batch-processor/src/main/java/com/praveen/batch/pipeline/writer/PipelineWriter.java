@@ -10,8 +10,8 @@ public class PipelineWriter extends Writer {
     private static final Logger log = LoggerFactory.getLogger(PipelineWriter.class);
 
     @Override
-    public void initialise() {
-        super.initialise();
+    public void initialize() {
+        super.initialize();
         log.info("Initialise Writer {} ",this);
     }
 
