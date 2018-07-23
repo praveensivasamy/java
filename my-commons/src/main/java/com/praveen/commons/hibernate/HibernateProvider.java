@@ -1,6 +1,7 @@
 package com.praveen.commons.hibernate;
 
 import java.sql.Connection;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
@@ -63,7 +64,7 @@ public class HibernateProvider {
             System.exit(1);
         } finally {
             Instant end = Instant.now();
-            log.info("Hibernate initialized in {}", DateUtils.getElapsedDuration(start, end));
+            log.info("Hibernate initialized in {} ms", Duration.between(start, end).toMillis());
         }
 
     }

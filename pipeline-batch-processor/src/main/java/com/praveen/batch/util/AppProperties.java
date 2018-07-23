@@ -58,6 +58,14 @@ public class AppProperties {
         }
     }
 
+    public String getProperty(String propertyName) {
+        return props.getProperty(propertyName);
+    }
+
+    public void setProperty(String propertyName, String value) {
+        props.setProperty(propertyName, value);
+    }
+
     public int getThreads() {
         return Integer.valueOf(props.getProperty("threads", "1"));
     }

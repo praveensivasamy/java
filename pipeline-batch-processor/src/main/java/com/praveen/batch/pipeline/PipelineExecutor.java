@@ -1,14 +1,17 @@
 package com.praveen.batch.pipeline;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.praveen.batch.config.AppConfiguration;
+import com.praveen.batch.util.AppProperties;
 import com.praveen.batch.util.ExecutionBarrier;
 
 /**
@@ -29,19 +32,44 @@ public class PipelineExecutor {
     private List<Pipeline> pipelines;
     private int threads = 0;
 
+    private AtomicBoolean done = new AtomicBoolean(false);
+
     public PipelineExecutor(AppConfiguration config) {
-        pipelineThreadFactory = new PipelineThreadFactory();
+        this.pipelineThreadFactory = new PipelineThreadFactory();
         this.appConfig = config;
         this.threads = appConfig.getThreads();
     }
 
     public void execute() {
-
+        String stopFile = AppProperties.instance().getProperty("stopFile");
+        if (stopFile != null) {
+            addShutdownHook(stopFile);
+        }
         if (threads == 1) {
             processSerially();
         } else {
             processParallel();
         }
+        done.set(true);
+    }
+
+    private void addShutdownHook(String stopFile) {
+        log.info("Will stop if {} is present", stopFile);
+        new Thread(() ->
+            {
+                while (!done.get()) {
+                    File file = new File(stopFile);
+                    if (!file.exists()) {
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                        }
+                    } else {
+                        log.info("Found the file {} and exiting", stopFile);
+                        System.exit(99);
+                    }
+                }
+            }, "PipelineStopper").start();
     }
 
     private void processSerially() {
@@ -58,13 +86,9 @@ public class PipelineExecutor {
 
         try {
             createPipelines();
-            
             initializePipelines();
-            
             executePipelines();
-
             tearDownPipelines();
-
         } finally {
             executor.shutdown();
         }
@@ -93,7 +117,7 @@ public class PipelineExecutor {
 
                 });
         }
-        
+
         barrier.await("After Pipeline Initialisation");
     }
 

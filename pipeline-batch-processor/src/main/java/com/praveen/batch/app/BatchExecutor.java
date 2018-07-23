@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.praveen.batch.config.AppConfiguration;
+import com.praveen.batch.enums.AppIdentifier;
 import com.praveen.batch.pipeline.PipelineExecutor;
 import com.praveen.batch.report.AppStatistics;
 import com.praveen.commons.hibernate.DBConnectionProvider;
@@ -22,28 +23,28 @@ import com.praveen.commons.hibernate.JpaDao;
 public class BatchExecutor {
     private static final Logger log = LoggerFactory.getLogger(BatchExecutor.class);
 
-    private static final String MAPPING_CONFIG_FILE = "batch.hibernate.cfg.xml";
+    private static final String MAPPING_CONFIG_FILE = "hibernate.batch.cfg.xml";
 
     private HibernateProvider configProvider;
 
     private JpaDao dao;
 
     public static void main(String... args) {
+        AppStatistics.applicationStarted();
         new BatchExecutor().run(args);
     }
 
     public void run(String... args) {
         log.info("App run");
-        AppStatistics.applicationStarted();
         initialize();
         process();
         tearDown();
         AppStatistics.applicationFinished();
-        AppStatistics.printStatistics();
+        AppStatistics.printStatistics(AppIdentifier.BASE);
     }
 
     private void initialize() {
-        log.info("Initialise");
+        log.info("Initialize");
         AppConfiguration.initConfig();
         initializeHibernate();
     }
@@ -51,21 +52,18 @@ public class BatchExecutor {
     private void initializeHibernate() {
         configProvider = HibernateProvider.instance(MAPPING_CONFIG_FILE, null);
         dao = JpaDao.instance(configProvider);
-        log.info(dao.toString());
+        log.info("{}", dao.toString());
     }
 
     private void process() {
         log.info("Process");
-
         testDBConnection();
-
         AppConfiguration config = AppConfiguration.getConfiguration();
         PipelineExecutor executor = new PipelineExecutor(config);
         executor.execute();
     }
 
     private void testDBConnection() {
-
         try {
             Connection con;
             for (int i = 0; i < 1000; i++) {
@@ -75,7 +73,6 @@ public class BatchExecutor {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
     }
 
     private void tearDown() {

@@ -36,7 +36,7 @@ public class AppConfiguration {
     public static AppConfiguration getConfiguration() {
         if (instance == null) {
             throw ApplicationException
-                    .warn("ApplicationConfiguration not initialised.Initialise " + AppConfiguration.class.getSimpleName() + " using initConfig().");
+                    .warn("Incorrect API usage.Initialise " + AppConfiguration.class.getSimpleName() + " using initConfig().");
         }
         return instance;
     }

@@ -1,9 +1,17 @@
 package com.praveen.batch.report;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MarkerFactory;
 
+import com.praveen.batch.config.AppConfiguration;
+import com.praveen.batch.enums.AppIdentifier;
+import com.praveen.batch.enums.AppStatistic;
 import com.praveen.commons.utils.ToStringUtils;
 
 /**
@@ -18,6 +26,11 @@ public class AppStatistics {
 
     private String instanceName;
 
+    /**
+     * statistic container on instance level <=> thread
+     */
+    private static Map<AppStatistic, AtomicLong> statisticsContainer = new LinkedHashMap<>();
+
     private static ThreadLocal<AppStatistics> instance = new ThreadLocal<AppStatistics>() {
         @Override
         protected AppStatistics initialValue() {
@@ -28,6 +41,14 @@ public class AppStatistics {
     };
 
     private AppStatistics() {
+
+    }
+
+    static {
+
+        for (AppStatistic statistic : AppStatistic.values()) {
+            statisticsContainer.put(statistic, new AtomicLong(0));
+        }
 
     }
 
@@ -51,10 +72,37 @@ public class AppStatistics {
         return appStopWatch.getTime();
     }
 
-    public static void printStatistics() {
+    public static void updateStat(AppStatistic statistic, int delta) {
+        statisticsContainer.get(statistic).addAndGet(delta);
+    }
 
-        log.info("Application Execution Time {}", getApplicationExecutionTime());
+    public static void printStatistics(AppIdentifier appId) {
+        log.info(MarkerFactory.getMarker("MONITOR"), output(appId));
+    }
 
+    private static void append(StringBuilder s, String string, int indentLevel) {
+        String indent = "     ";
+        s.append(repeat(indent, indentLevel)).append(" - ").append(string).append("\n");
+    }
+
+    private static String repeat(String string, int indentLevel) {
+        StringBuilder res = new StringBuilder();
+        for (int i = 0; i < indentLevel; i++) {
+            res.append(string);
+        }
+        return res.toString();
+    }
+
+    private static String align(int tab, String label) {
+        label = label.trim();
+        return String.format("%-" + tab + "s: ", label);
+    }
+
+    private static String output(AppIdentifier appId) {
+        StringBuilder s = new StringBuilder(AppConfiguration.getConfiguration().toString() + "\n");
+        s.append("Performance Statistics \n");
+        append(s, align(50, "Total application time                ") + getApplicationExecutionTime(), 0);
+        return s.toString();
     }
 
     @Override
