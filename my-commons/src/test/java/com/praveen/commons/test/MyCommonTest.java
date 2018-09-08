@@ -6,8 +6,8 @@ import junit.framework.TestCase;
 
 public class MyCommonTest extends TestCase {
 
-    @Test
-    public void test() {
-        assertTrue("Sample Test", true);
-    }
+	@Test
+	public void test() {
+		assertTrue("Sample Test", true);
+	}
 }

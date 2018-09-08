@@ -30,32 +30,32 @@ import com.praveen.commons.utils.ToStringUtils;
  */
 public class HibernateProvider {
 
-    private static final Logger log = LoggerFactory.getLogger(HibernateProvider.class);
+	private static final Logger log = LoggerFactory.getLogger(HibernateProvider.class);
 
-    private static Map<String, HibernateProvider> instances = new HashMap<>();
+	private static Map<String, HibernateProvider> instances = new HashMap<>();
 
-    private SessionFactory sessionFactory;
-    private String configFile;
-    private String defaultSchema;
-    private String url;
-    private String user;
-    private String password;
+	private SessionFactory sessionFactory;
+	private String configFile;
+	private String defaultSchema;
+	private String url;
+	private String user;
+	private String password;
 
-    /** The {@link Interceptor} for this instance, if any */
-    private Interceptor interceptor;
+	/** The {@link Interceptor} for this instance, if any */
+	private Interceptor interceptor;
 
-    private HibernateProvider(String configFile, Interceptor dbInterceptor) {
-        this.configFile = configFile;
-        this.interceptor = dbInterceptor;
-        initializeSessionFactory();
-    }
+	private HibernateProvider(String configFile, Interceptor dbInterceptor) {
+		this.configFile = configFile;
+		this.interceptor = dbInterceptor;
+		initializeSessionFactory();
+	}
 
-    private void initializeSessionFactory() {
-        Instant start = Instant.now();
-        try {
-            StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure(configFile).build();
-            Metadata metaData = new MetadataSources(ssr).getMetadataBuilder().build();
-            sessionFactory = metaData.getSessionFactoryBuilder().build();
+	private void initializeSessionFactory() {
+		Instant start = Instant.now();
+		try {
+			StandardServiceRegistry ssr = new StandardServiceRegistryBuilder().configure(configFile).build();
+			Metadata metaData = new MetadataSources(ssr).getMetadataBuilder().build();
+			sessionFactory = metaData.getSessionFactoryBuilder().build();
 
         } catch (Exception e) {
             log.error("Error in Hibernate initialization: " + this.url + ";" + this.user, e);
@@ -67,90 +67,93 @@ public class HibernateProvider {
             log.info("Hibernate initialized in {} ms", Duration.between(start, end).toMillis());
         }
 
-    }
+	}
 
-    /**
-     * @param configFile the hibernate configuration file
-     * @param dbInterceptor a {@link Interceptor} instance, optional. <code>null</code> if no interceptor is required
-     * @return the {@link HibernateProvider} instance for the above parameters
-     */
-    public static HibernateProvider instance(String configFile, Interceptor dbInterceptor) {
-        log.info("configFile : {} , interceptor : {}", configFile, dbInterceptor);
-        synchronized (HibernateProvider.class) {
-            HibernateProvider res = instances.get(getMapKey(configFile, dbInterceptor));
-            if (res == null) {
-                res = new HibernateProvider(configFile, dbInterceptor);
-                instances.put(getMapKey(configFile, dbInterceptor), res);
-            }
-            return res;
-        }
-    }
+	/**
+	 * @param configFile    the hibernate configuration file
+	 * @param dbInterceptor a {@link Interceptor} instance, optional.
+	 *                      <code>null</code> if no interceptor is required
+	 * @return the {@link HibernateProvider} instance for the above parameters
+	 */
+	public static HibernateProvider instance(String configFile, Interceptor dbInterceptor) {
+		log.info("configFile : {} , interceptor : {}", configFile, dbInterceptor);
+		synchronized (HibernateProvider.class) {
+			HibernateProvider res = instances.get(getMapKey(configFile, dbInterceptor));
+			if (res == null) {
+				res = new HibernateProvider(configFile, dbInterceptor);
+				instances.put(getMapKey(configFile, dbInterceptor), res);
+			}
+			return res;
+		}
+	}
 
-    /**
-     * Get a new {@link HibernateProvider} instance from the given hibernate cfg file and a connection string in format: url#user#password#schema
-     * <p>
-     * Required if the db conn parameters are set as system props from command line
-     */
-    public static HibernateProvider instance(String configFile, String connString, Interceptor dbInterceptor) {
-        log.info("configFile: {} , connectionString : {} , interceptor : {}", configFile, connString, dbInterceptor);
-        synchronized (HibernateProvider.class) {
-            HibernateProvider res = instances.get(getMapKey(configFile, connString, dbInterceptor));
-            if (res == null) {
-                res = new HibernateProvider(configFile, connString, dbInterceptor);
-                instances.put(getMapKey(configFile, connString, dbInterceptor), res);
-            }
-            return res;
-        }
-    }
+	/**
+	 * Get a new {@link HibernateProvider} instance from the given hibernate cfg
+	 * file and a connection string in format: url#user#password#schema
+	 * <p>
+	 * Required if the db conn parameters are set as system props from command line
+	 */
+	public static HibernateProvider instance(String configFile, String connString, Interceptor dbInterceptor) {
+		log.info("configFile: {} , connectionString : {} , interceptor : {}", configFile, connString, dbInterceptor);
+		synchronized (HibernateProvider.class) {
+			HibernateProvider res = instances.get(getMapKey(configFile, connString, dbInterceptor));
+			if (res == null) {
+				res = new HibernateProvider(configFile, connString, dbInterceptor);
+				instances.put(getMapKey(configFile, connString, dbInterceptor), res);
+			}
+			return res;
+		}
+	}
 
-    private HibernateProvider(String configFile, String connString, Interceptor dbInterceptor) {
-        this.configFile = configFile;
-        this.interceptor = dbInterceptor;
-        this.url = ToStringUtils.getUrl(connString);
-        this.user = ToStringUtils.getUser(connString);
-        this.password = ToStringUtils.getPassword(connString);
-        this.defaultSchema = ToStringUtils.getSchema(connString);
-        initializeSessionFactory();
-    }
+	private HibernateProvider(String configFile, String connString, Interceptor dbInterceptor) {
+		this.configFile = configFile;
+		this.interceptor = dbInterceptor;
+		this.url = ToStringUtils.getUrl(connString);
+		this.user = ToStringUtils.getUser(connString);
+		this.password = ToStringUtils.getPassword(connString);
+		this.defaultSchema = ToStringUtils.getSchema(connString);
+		initializeSessionFactory();
+	}
 
-    private static String getMapKey(String hibernateConfigFile, Interceptor dbInterceptor) {
-        return hibernateConfigFile + ":" + (dbInterceptor == null ? "null" : dbInterceptor.getClass().getSimpleName());
-    }
+	private static String getMapKey(String hibernateConfigFile, Interceptor dbInterceptor) {
+		return hibernateConfigFile + ":" + (dbInterceptor == null ? "null" : dbInterceptor.getClass().getSimpleName());
+	}
 
-    private static String getMapKey(String hibernateConfigFile, String dbConn, Interceptor interceptor) {
-        return hibernateConfigFile + ":" + dbConn + ":" + (interceptor == null ? "null" : interceptor.getClass().getSimpleName());
-    }
+	private static String getMapKey(String hibernateConfigFile, String dbConn, Interceptor interceptor) {
+		return hibernateConfigFile + ":" + dbConn + ":"
+				+ (interceptor == null ? "null" : interceptor.getClass().getSimpleName());
+	}
 
-    private SessionFactory getSessionFactory() {
-        return sessionFactory;
-    }
+	private SessionFactory getSessionFactory() {
+		return sessionFactory;
+	}
 
-    /**
-     * @return a new Hibernate {@link Session}
-     */
-    public Session getSession() {
-        return getSessionFactory().openSession();
-    }
+	/**
+	 * @return a new Hibernate {@link Session}
+	 */
+	public Session getSession() {
+		return getSessionFactory().openSession();
+	}
 
-    protected Interceptor getInterceptor() {
-        return interceptor;
-    }
+	protected Interceptor getInterceptor() {
+		return interceptor;
+	}
 
-    /**
-     * @return a new Hibernate {@link StatelessSession}
-     */
-    public StatelessSession getStatlessSession() {
-        return getSessionFactory().openStatelessSession();
-    }
+	/**
+	 * @return a new Hibernate {@link StatelessSession}
+	 */
+	public StatelessSession getStatlessSession() {
+		return getSessionFactory().openStatelessSession();
+	}
 
-    /**
-     * Close all available {@link HibernateProvider} instances
-     */
-    public static final void tearDownAll() {
-        for (HibernateProvider instance : instances.values()) {
-            log.info("Closing SessionFactory");
-            instance.getSessionFactory().close();
-        }
-        instances.clear();
-    }
+	/**
+	 * Close all available {@link HibernateProvider} instances
+	 */
+	public static final void tearDownAll() {
+		for (HibernateProvider instance : instances.values()) {
+			log.info("Closing SessionFactory");
+			instance.getSessionFactory().close();
+		}
+		instances.clear();
+	}
 }
