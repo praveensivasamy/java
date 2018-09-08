@@ -191,5 +191,5 @@ public class DateUtils {
 	public static String getElapsedDuration(Instant start, Instant end) {
 		return DurationFormatUtils.formatDurationWords(Duration.between(start, end).toMillis(), true, true);
 	}
-    
- }
+
+}

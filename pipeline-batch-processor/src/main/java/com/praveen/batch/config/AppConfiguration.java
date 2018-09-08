@@ -18,67 +18,68 @@ import com.praveen.batch.util.AppProperties;
 import com.praveen.commons.exception.ApplicationException;
 
 /**
- * Base configuration which is accessible across various {@link PipeLineElement}s
- * 
+ * Base configuration which is accessible across various
+ * {@link PipeLineElement}s
+ *
  * The pre-requisite is that this class has to be initialised before using.
- * 
+ *
  * @author Praveen Sivasamy
  */
 public class AppConfiguration {
 
-    private static final Logger log = LoggerFactory.getLogger(AppConfiguration.class);
+	private static final Logger log = LoggerFactory.getLogger(AppConfiguration.class);
 
-    /** The default instance. */
-    protected static AppConfiguration instance;
+	/** The default instance. */
+	protected static AppConfiguration instance;
 
-    private int threads = 1;
+	private int threads = 1;
 
-    public static AppConfiguration getConfiguration() {
-        if (instance == null) {
-            throw ApplicationException
-                    .warn("Incorrect API usage.Initialise " + AppConfiguration.class.getSimpleName() + " using initConfig().");
-        }
-        return instance;
-    }
+	public static AppConfiguration getConfiguration() {
+		if (instance == null) {
+			throw ApplicationException.warn("Incorrect API usage.Initialise " + AppConfiguration.class.getSimpleName()
+					+ " using initConfig().");
+		}
+		return instance;
+	}
 
-    public static void initConfig() {
-        AppConfiguration res = new AppConfiguration();
-        res.initialise();
-        instance = res;
-    }
+	public static void initConfig() {
+		AppConfiguration res = new AppConfiguration();
+		res.initialise();
+		instance = res;
+	}
 
-    private void initialise() {
-        log.info("Initialise config...");
-        setUpThreading();
-    }
+	private void initialise() {
+		log.info("Initialise config...");
+		setUpThreading();
+	}
 
-    private void setUpThreading() {
-        threads = AppProperties.instance().getThreads();
-    }
+	private void setUpThreading() {
+		threads = AppProperties.instance().getThreads();
+	}
 
-    public int getThreads() {
-        return this.threads;
-    }
+	public int getThreads() {
+		return this.threads;
+	}
 
-    /**
-     * override default threadsize
-     * 
-     * @param threads
-     */
-    public void setThreadSize(int threads) {
-        this.threads = threads;
-    }
+	/**
+	 * override default threadsize
+	 * 
+	 * @param threads
+	 */
+	public void setThreadSize(int threads) {
+		this.threads = threads;
+	}
 
-    public List<Reader> getPipelineReaders() {
-        return Arrays.asList(new PipelineReader(), new OracleDBReader());
-    }
+	public List<Reader> getPipelineReaders() {
+		return Arrays.asList(new PipelineReader(), new OracleDBReader());
+	}
 
-    public List<Processor> getPipelineProcessors() {
-        return Arrays.asList(new PipelineProcessor());
-    }
+	public List<Processor> getPipelineProcessors() {
+		return Arrays.asList(new PipelineProcessor());
+	}
 
-    public List<Writer> getPipelineWriters() {
-        return Arrays.asList(new PipelineWriter());
-    }
+	public List<Writer> getPipelineWriters() {
+		return Arrays.asList(new PipelineWriter());
+	}
 
 }

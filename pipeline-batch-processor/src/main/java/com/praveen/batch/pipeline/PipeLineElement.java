@@ -8,25 +8,25 @@ import com.praveen.batch.report.AppStatistics;
 
 /**
  * These are working units inside the pipeline
- * 
+ *
  * @author Praveen Sivasamy
  *
  */
 
 public abstract class PipeLineElement {
 
-    private static final Logger log = LoggerFactory.getLogger(PipeLineElement.class);
+	private static final Logger log = LoggerFactory.getLogger(PipeLineElement.class);
 
-    protected AppStatistics stat;
+	protected AppStatistics stat;
 
-    public void initialize() {
-        stat = AppStatistics.getInstance();
-    }
+	public void initialize() {
+		stat = AppStatistics.getInstance();
+	}
 
-    public abstract PipeLineDataContainer process(PipeLineDataContainer container);
+	public abstract PipeLineDataContainer process(PipeLineDataContainer container);
 
-    public void tearDown() {
+	public void tearDown() {
 
-    }
+	}
 
 }

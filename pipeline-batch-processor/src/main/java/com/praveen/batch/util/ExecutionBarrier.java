@@ -11,52 +11,53 @@ import com.praveen.commons.utils.ToStringUtils;
 
 public class ExecutionBarrier {
 
-    private CyclicBarrier barrier;
+	private CyclicBarrier barrier;
 
-    private List<Throwable> exceptions = new ArrayList<>();
-    private boolean failed = false;
+	private List<Throwable> exceptions = new ArrayList<>();
+	private boolean failed = false;
 
-    public ExecutionBarrier(int parties) {
-        barrier = new CyclicBarrier(parties);
-    }
+	public ExecutionBarrier(int parties) {
+		barrier = new CyclicBarrier(parties);
+	}
 
-    public int await(String where) {
+	public int await(String where) {
 
-        try {
-            return barrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
-            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION).details("Exception " + where + "  during wait on background pipeline processing" + e);
-        }
-    }
+		try {
+			return barrier.await();
+		} catch (InterruptedException | BrokenBarrierException e) {
+			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION)
+					.details("Exception " + where + "  during wait on background pipeline processing" + e);
+		}
+	}
 
-    public synchronized List<Throwable> getExceptions() {
-        return exceptions;
-    }
+	public synchronized List<Throwable> getExceptions() {
+		return exceptions;
+	}
 
-    public synchronized void setExceptions(Throwable exception) {
-        exceptions.add(exception);
-        failed = true;
-    }
+	public synchronized void setExceptions(Throwable exception) {
+		exceptions.add(exception);
+		failed = true;
+	}
 
-    public synchronized boolean isFailed() {
-        return failed;
-    }
+	public synchronized boolean isFailed() {
+		return failed;
+	}
 
-    public synchronized int getPendingParties() {
-        return barrier.getParties() - barrier.getNumberWaiting();
-    }
+	public synchronized int getPendingParties() {
+		return barrier.getParties() - barrier.getNumberWaiting();
+	}
 
-    public void reset() {
-        barrier.reset();
-    }
+	public void reset() {
+		barrier.reset();
+	}
 
-    public void setException(Throwable e) {
-        this.exceptions.add(e);
-    }
+	public void setException(Throwable e) {
+		this.exceptions.add(e);
+	}
 
-    @Override
-    public String toString() {
-        return ToStringUtils.asString(this, "exceptions", "barrier");
-    }
+	@Override
+	public String toString() {
+		return ToStringUtils.asString(this, "exceptions", "barrier");
+	}
 
 }

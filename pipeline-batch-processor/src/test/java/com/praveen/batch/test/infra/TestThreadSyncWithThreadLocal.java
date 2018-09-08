@@ -12,23 +12,22 @@ import com.praveen.batch.report.AppStatistics;
 
 class TestThreadSyncWithThreadLocal {
 
-    private static final Logger log = LoggerFactory.getLogger(TestThreadSyncWithThreadLocal.class);
+	private static final Logger log = LoggerFactory.getLogger(TestThreadSyncWithThreadLocal.class);
 
-    @Test
-    void test() {
-        PipelineThreadFactory pipelineThreadFactory = new PipelineThreadFactory();
-        int threads = 5;
-        ExecutorService exec = Executors.newFixedThreadPool(threads, pipelineThreadFactory);
-        try {
-            for (int i = 0; i < threads; i++) {
-                exec.execute(() ->
-                    {
-                        log.info("Executor" + AppStatistics.getInstance());
-                    });
-            }
-        } finally {
-            exec.shutdown();
-        }
-    }
+	@Test
+	void test() {
+		PipelineThreadFactory pipelineThreadFactory = new PipelineThreadFactory();
+		int threads = 5;
+		ExecutorService exec = Executors.newFixedThreadPool(threads, pipelineThreadFactory);
+		try {
+			for (int i = 0; i < threads; i++) {
+				exec.execute(() -> {
+					log.info("Executor" + AppStatistics.getInstance());
+				});
+			}
+		} finally {
+			exec.shutdown();
+		}
+	}
 
 }

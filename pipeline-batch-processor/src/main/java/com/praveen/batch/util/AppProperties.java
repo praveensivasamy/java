@@ -12,62 +12,63 @@ import com.praveen.commons.exception.ApplicationException;
 
 public class AppProperties {
 
-    private static final Logger log = LoggerFactory.getLogger(AppProperties.class);
+	private static final Logger log = LoggerFactory.getLogger(AppProperties.class);
 
-    private static AppProperties instance = new AppProperties();
-    private String propertyFile = "app.properties";
+	private static AppProperties instance = new AppProperties();
+	private String propertyFile = "app.properties";
 
-    private Properties props;
+	private Properties props;
 
-    public static AppProperties instance() {
-        if (instance == null) {
-            throw ApplicationException.warn("AppProperties not initialised properly.");
-        }
-        return instance;
-    }
+	public static AppProperties instance() {
+		if (instance == null) {
+			throw ApplicationException.warn("AppProperties not initialised properly.");
+		}
+		return instance;
+	}
 
-    private AppProperties() {
-        loadProperties();
-        updateProperties();
+	private AppProperties() {
+		loadProperties();
+		updateProperties();
 
-    }
+	}
 
-    /**
-     * Load properties from the .properties file
-     */
-    private void loadProperties() {
-        props = new Properties();
-        try {
-            props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile));
-        } catch (IOException e) {
-            throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e);
-        }
-    }
+	/**
+	 * Load properties from the .properties file
+	 */
+	private void loadProperties() {
+		props = new Properties();
+		try {
+			props.load(Thread.currentThread().getContextClassLoader().getResourceAsStream(propertyFile));
+		} catch (IOException e) {
+			throw ApplicationException.instance(AppExceptionIdentifier.TECHNICAL_EXCEPTION, e);
+		}
+	}
 
-    /**
-     * Override the loaded properties with that specified as system property like -D>property
-     */
-    private void updateProperties() {
-        Enumeration<Object> sysProps = System.getProperties().keys();
-        while (sysProps.hasMoreElements()) {
-            String key = (String) sysProps.nextElement();
-            Object res = props.setProperty(key, System.getProperty(key));
-            if (res != null) {
-                log.info("Property <{}> overridden by system property", key);
-            }
-        }
-    }
+	/**
+	 * Override the loaded properties with that specified as system property like
+	 * -D>property
+	 */
+	private void updateProperties() {
+		Enumeration<Object> sysProps = System.getProperties().keys();
+		while (sysProps.hasMoreElements()) {
+			String key = (String) sysProps.nextElement();
+			Object res = props.setProperty(key, System.getProperty(key));
+			if (res != null) {
+				log.info("Property <{}> overridden by system property", key);
+			}
+		}
+	}
 
-    public String getProperty(String propertyName) {
-        return props.getProperty(propertyName);
-    }
+	public String getProperty(String propertyName) {
+		return props.getProperty(propertyName);
+	}
 
-    public void setProperty(String propertyName, String value) {
-        props.setProperty(propertyName, value);
-    }
+	public void setProperty(String propertyName, String value) {
+		props.setProperty(propertyName, value);
+	}
 
-    public int getThreads() {
-        return Integer.valueOf(props.getProperty("threads", "1"));
-    }
+	public int getThreads() {
+		return Integer.valueOf(props.getProperty("threads", "1"));
+	}
 
 }

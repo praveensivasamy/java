@@ -30,14 +30,14 @@ public class DBConnectionProvider extends DriverManagerConnectionProviderImpl {
 
 	private static DBConnectionProvider instance;
 
-    /**
-     * Called during hibernate config initilaization
-     * 
-     * @see hibernate.cfg.xml - hibernate.connection.provider_class
-     */
-    public DBConnectionProvider() {
-        instance = this;
-    }
+	/**
+	 * Called during hibernate config initilaization
+	 * 
+	 * @see hibernate.cfg.xml - hibernate.connection.provider_class
+	 */
+	public DBConnectionProvider() {
+		instance = this;
+	}
 
 	public static DBConnectionProvider instance() {
 		return instance;

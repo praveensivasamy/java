@@ -17,7 +17,6 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.praveen.commons.utils.DateUtils;
 import com.praveen.commons.utils.ToStringUtils;
 
 /**
@@ -57,15 +56,16 @@ public class HibernateProvider {
 			Metadata metaData = new MetadataSources(ssr).getMetadataBuilder().build();
 			sessionFactory = metaData.getSessionFactoryBuilder().build();
 
-        } catch (Exception e) {
-            log.error("Error in Hibernate initialization: " + this.url + ";" + this.user, e);
-            // hibernate background thread prevents clean application exit - cannot call sessionFactory.close()
-            // as the sessionFactory will be null in case of exceptions
-            System.exit(1);
-        } finally {
-            Instant end = Instant.now();
-            log.info("Hibernate initialized in {} ms", Duration.between(start, end).toMillis());
-        }
+		} catch (Exception e) {
+			log.error("Error in Hibernate initialization: " + this.url + ";" + this.user, e);
+			// hibernate background thread prevents clean application exit - cannot call
+			// sessionFactory.close()
+			// as the sessionFactory will be null in case of exceptions
+			System.exit(1);
+		} finally {
+			Instant end = Instant.now();
+			log.info("Hibernate initialized in {} ms", Duration.between(start, end).toMillis());
+		}
 
 	}
 

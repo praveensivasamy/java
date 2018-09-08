@@ -7,22 +7,22 @@ import com.praveen.batch.pipeline.container.PipeLineDataContainer;
 
 public class PipelineWriter extends Writer {
 
-    private static final Logger log = LoggerFactory.getLogger(PipelineWriter.class);
+	private static final Logger log = LoggerFactory.getLogger(PipelineWriter.class);
 
-    @Override
-    public void initialize() {
-        super.initialize();
-        log.info("Initialise Writer {} ",this);
-    }
+	@Override
+	public void initialize() {
+		super.initialize();
+		log.info("Initialise Writer {} ", this);
+	}
 
-    @Override
-    public PipeLineDataContainer process(PipeLineDataContainer container) {
-        return null;
-    }
+	@Override
+	public PipeLineDataContainer process(PipeLineDataContainer container) {
+		return null;
+	}
 
-    @Override
-    public String toString() {
-        return getClass().getSimpleName().concat("#") + hashCode();
-    }
+	@Override
+	public String toString() {
+		return getClass().getSimpleName().concat("#") + hashCode();
+	}
 
 }
